@@ -1,0 +1,11 @@
+1. 以虚拟化为基础的虚拟化
+虚拟化
+kvm,xen,ctirx,vmware
+Iaas
+openstack, cloudstack
+Saas
+cloudfoundy
+Paas
+GAE
+2. 以大数据处理为目标的分布式
+Hadoop
