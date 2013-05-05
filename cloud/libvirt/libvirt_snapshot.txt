@@ -1,41 +1,27 @@
-Ç³Îösnapshots, blockcommit,blockpull
-×÷Õß£ºKashyap Chamarthy <kchamart#redhat.com>
+ï»¿æµ…æsnapshots, blockcommit,blockpull
+ä½œè€…ï¼šKashyap Chamarthy <kchamart#redhat.com>
 
 Date: Tue, 23 Oct 2012 15:28:06 +0530
 
-ÕâÊÇÒ»Æª¹ØÓÚsnapshots, blockpull, blockcommitµÄµÄ½éÉÜ.×÷ÕßºÍwith Eric Blake, Jeff Cody,
+è¿™æ˜¯ä¸€ç¯‡å…³äºsnapshots, blockpull, blockcommitçš„çš„ä»‹ç».ä½œè€…å’Œwith Eric Blake, Jeff Cody,
 
-Kevin WolfÒÔ¼°ºÜ¶àIRCºÍmailing listsÀïÃæµÄÍ¬Ñ§´óÁ¿ÌÖÂÛÒÔ¼°×÷Õß´óÁ¿µÄÌØÏò²âÊÔµÄ»ù´¡Ö®ÉÏ
+Kevin Wolfä»¥åŠå¾ˆå¤šIRCå’Œmailing listsé‡Œé¢çš„åŒå­¦å¤§é‡è®¨è®ºä»¥åŠä½œè€…å¤§é‡çš„ç‰¹å‘æµ‹è¯•çš„åŸºç¡€ä¹‹ä¸Š
 
-×Ü½á³öÀ´µÄ
+åŸºç¡€çŸ¥è¯†
+ä¸€ä¸ªè™šæ‹Ÿæœºå¿«ç…§å¯è¢«çœ‹ä½œæ˜¯è™šæ‹Ÿæœºçš„åœ¨æŸä¸ªæŒ‡å®šæ—¶é—´çš„è§†å›¾ï¼ˆåŒ…æ‹¬ä»–çš„æ“ä½œç³»ç»Ÿå’Œæ‰€æœ‰çš„ç¨‹åºï¼‰.
 
-×÷ÕßÒ²ÕıÔÚ×¼±¸Ğ´Ò»Ğ©¹ØÓÚblockcopy²¿·ÖµÄÎÄµµ£¬µ«ÕâÒªµÈËûÍê³ÉblockcopyµÄ²âÊÔÖ®ºó.
+æ®æ­¤ï¼ŒæŸå¯ä»¥è¿˜åŸåˆ°ä¸€ä¸ªä¹‹å‰çš„å®Œæ•´çš„çŠ¶æ€ï¼Œæˆ–è€…åœ¨guestè¿è¡Œçš„æ—¶å€™åšä¸ªå¤‡ä»½.æ‰€ä»¥ï¼Œåœ¨æˆ‘ä»¬
 
-×÷Õß»¶Ó­ÆÀÂÛ»¶Ó­ÅÄ×©.£¨ÎÒ±íÊ¾Ò²»¶Ó­£©
+ç»§ç»­æ·±å…¥ä¹‹å‰æˆ‘ä»¬å¿…é¡»ææ‡‚ä¸¤ä¸ªåè¯ï¼šbacking fileså’Œoverlays .
 
----
-docs/snapshots-blockcommit-blockpull.rst
-..--------------------------------------------------------------
-×¢Òâ: ËùÓĞ²âÊÔ¶¼ÊÇÔÚ×îĞÂµÄ qemu-git,libvirt-git (as of
+QCOW2 backing files ä¸ overlays
+qcow2ï¼ˆqemu copy-on-writeï¼‰å…·æœ‰åˆ›å»ºä¸€ä¸ªbase-imageï¼Œä»¥åŠåœ¨base-imageï¼ˆå³backing fileï¼‰
 
-20-Oct-2012 ÔÚ Fedora-18 alphaÏµÍ³ÉÏµ¹ÌÚ³öÀ´µÄ
-..--------------------------------------------------------------
+çš„åŸºç¡€ä¸Šåˆ›å»ºå¤šä¸ªcopy-on-write overlaysé•œåƒçš„èƒ½åŠ›.backing fileså’Œoverlaysååˆ†æœ‰ç”¨ï¼Œ
 
-»ù´¡ÖªÊ¶
-Ò»¸öĞéÄâ»ú¿ìÕÕ¿É±»¿´×÷ÊÇĞéÄâ»úµÄÔÚÄ³¸öÖ¸¶¨Ê±¼äµÄÊÓÍ¼£¨°üÀ¨ËûµÄ²Ù×÷ÏµÍ³ºÍËùÓĞµÄ³ÌĞò£©.
+å¯ä»¥è¿…é€Ÿçš„åˆ›å»ºç˜¦è£…å¤‡è™šæ‹Ÿæœºçš„å®ä¾‹ï¼Œç‰¹åˆ«æ˜¯åœ¨å¼€å‘æµ‹è¯•çš„æ—¶å€™å¯ä»¥è®©ä½ è¿…é€Ÿçš„å›æ»šåˆ°ä¹‹å‰çš„æŸä¸ª
 
-¾İ´Ë£¬Ä³¿ÉÒÔ»¹Ô­µ½Ò»¸öÖ®Ç°µÄÍêÕûµÄ×´Ì¬£¬»òÕßÔÚguestÔËĞĞµÄÊ±ºò×ö¸ö±¸·İ.ËùÒÔ£¬ÔÚÎÒÃÇ
-
-¼ÌĞøÉîÈëÖ®Ç°ÎÒÃÇ±ØĞë¸ã¶®Á½¸öÃû´Ê£ºbacking filesºÍoverlays .
-
-QCOW2 backing files Óë overlays
-qcow2£¨qemu copy-on-write£©¾ßÓĞ´´½¨Ò»¸öbase-image£¬ÒÔ¼°ÔÚbase-image£¨¼´backing file£©
-
-µÄ»ù´¡ÉÏ´´½¨¶à¸öcopy-on-write overlays¾µÏñµÄÄÜÁ¦.backing filesºÍoverlaysÊ®·ÖÓĞÓÃ£¬
-
-¿ÉÒÔÑ¸ËÙµÄ´´½¨Êİ×°±¸ĞéÄâ»úµÄÊµÀı£¬ÌØ±ğÊÇÔÚ¿ª·¢²âÊÔµÄÊ±ºò¿ÉÒÔÈÃÄãÑ¸ËÙµÄ»Ø¹öµ½Ö®Ç°µÄÄ³¸ö
-
-ÒÑÖª×´Ì¬£¬¶ªÆúoverlay.
+å·²çŸ¥çŠ¶æ€ï¼Œä¸¢å¼ƒoverlay.
 
 Figure-1
 
@@ -44,7 +30,7 @@ Figure-1
 | RootBase     |<---| Overlay-1   |<---| Overlay-1A  <--- | Overlay-1B  |
 | (raw/qcow2)  |    | (qcow2)     |    | (qcow2)     |    | (qcow2)     |
 '--------------'    '-------------'    '-------------'    '-------------'
-ÉÏÍ¼±íÃ÷rootbaseÊÇoverlay-1µÄbacking file£¬ÒÔ´ËÀàÍÆ.
+ä¸Šå›¾è¡¨æ˜rootbaseæ˜¯overlay-1çš„backing fileï¼Œä»¥æ­¤ç±»æ¨.
 
 Figure-2
 
@@ -67,112 +53,112 @@ Figure-2
    '------------| Overlay-3 |<---| Overlay-3A |
                 |           |    | (Active)   |
                 '-----------'    '------------'
-ÉÏÍ¼±íÃ÷ÎÒÃÇ¿ÉÒÔÖ»ÓÃµ¥¸öbacking fileÀ´´´½¨¶àÌõÁ´.
+ä¸Šå›¾è¡¨æ˜æˆ‘ä»¬å¯ä»¥åªç”¨å•ä¸ªbacking fileæ¥åˆ›å»ºå¤šæ¡é“¾.
 
-×¢Òâ : backing file ×ÜÊÇ Ö»¶Á ´ò¿ªµÄ. »»ÑÔÖ®, Ò»µ©ĞÂ¿ìÕÕ±»´´½¨£¬
+æ³¨æ„ : backing file æ€»æ˜¯ åªè¯» æ‰“å¼€çš„. æ¢è¨€ä¹‹, ä¸€æ—¦æ–°å¿«ç…§è¢«åˆ›å»ºï¼Œ
 
-ËûµÄºó¶ËÎÄ¼ş¾Í²»ÄÜ±»ĞŞ¸Ä,(¿ìÕÕÒÀÀµÓÚºó¶ËÎÄ¼şµÄÕâÖÖ×´Ì¬).
+ä»–çš„åç«¯æ–‡ä»¶å°±ä¸èƒ½è¢«ä¿®æ”¹,(å¿«ç…§ä¾èµ–äºåç«¯æ–‡ä»¶çš„è¿™ç§çŠ¶æ€).
 
-ÁË½â¸ü¶à²Î¼ûºóÃæµÄ('blockcommit' ½Ú) .
+äº†è§£æ›´å¤šå‚è§åé¢çš„('blockcommit' èŠ‚) .
 
-Ê¾Àı :
+ç¤ºä¾‹ :
 
 [FedoraBase.img] ----- <- [Fed-guest-1.qcow2] <- [Fed-w-updates.qcow2] <- [Fedora-guest-with-updates-1A]
                  \
                   \--- <- [Fed-guest-2.qcow2] <- [Fed-w-updates.qcow2] <- [Fedora-guest-with-updates-2A]
-£¨×¢Òâ¼ıÍ·µÄ·½Ïò£¬Fed-w-updates.qcow2 µÄbacking fileÊÇ Fed-guest-1.qcow2£©
+ï¼ˆæ³¨æ„ç®­å¤´çš„æ–¹å‘ï¼ŒFed-w-updates.qcow2 çš„backing fileæ˜¯ Fed-guest-1.qcow2ï¼‰
 
-ÉÏÃæµÄÊ¾ÀıÖĞ¿ÉÒÔ¿´µ½ FedoraBase.img °²×°ÁËÒ»¸öfedora17ÏµÍ³£¬²¢×÷ÎªÎÒÃÇµÄbacking file.
+ä¸Šé¢çš„ç¤ºä¾‹ä¸­å¯ä»¥çœ‹åˆ° FedoraBase.img å®‰è£…äº†ä¸€ä¸ªfedora17ç³»ç»Ÿï¼Œå¹¶ä½œä¸ºæˆ‘ä»¬çš„backing file.
 
-ÏÖÔÚÕâ¸öbacking file½«×÷ÎªÄ£°å¿ìËÙµÄ´´½¨Á½¸öÊİ×°±¸ÊµÀı£¬ºÍ Figure-2 µÀÀíÊÇÒ»ÑùµÄ.
+ç°åœ¨è¿™ä¸ªbacking fileå°†ä½œä¸ºæ¨¡æ¿å¿«é€Ÿçš„åˆ›å»ºä¸¤ä¸ªç˜¦è£…å¤‡å®ä¾‹ï¼Œå’Œ Figure-2 é“ç†æ˜¯ä¸€æ ·çš„.
 
-Ê¹ÓÃqemu-imgÎªµ¥¸öbacking fileÀ´´´½¨Á½¸öfedoraµÄÊİ×°±¸¿ËÂ¡:
+ä½¿ç”¨qemu-imgä¸ºå•ä¸ªbacking fileæ¥åˆ›å»ºä¸¤ä¸ªfedoraçš„ç˜¦è£…å¤‡å…‹éš†:
 
 # qemu-img create -b /export/vmimages/RootBase.img -f qcow2 \
   /export/vmimages/Fedora-guest-1.qcow2
 
 # qemu-img create -b /export/vmimages/RootBase.img -f qcow2 \
   /export/vmimages/Fedora-guest-2.qcow2
-ÏÖÔÚ£¬ÉÏÃæ´´½¨³öÀ´µÄÁ½¸ö¾µÏñ Fedora-guest-1 & Fedora-guest-2 ¶¼¿ÉÒÔÓÃÀ´
+ç°åœ¨ï¼Œä¸Šé¢åˆ›å»ºå‡ºæ¥çš„ä¸¤ä¸ªé•œåƒ Fedora-guest-1 & Fedora-guest-2 éƒ½å¯ä»¥ç”¨æ¥
 
-Æô¶¯Ò»¸öĞéÄâ»ú£¬¼ÌĞøÎÒÃÇµÄÊ¾Àı£¬ÏÖÔÚÎÒÃÇĞèÒª´´½¨Ò»¸öf17µÄÊµÀı£¬µ«ÊÇÕâ´ÎÎÒÃÇĞèÒª
+å¯åŠ¨ä¸€ä¸ªè™šæ‹Ÿæœºï¼Œç»§ç»­æˆ‘ä»¬çš„ç¤ºä¾‹ï¼Œç°åœ¨æˆ‘ä»¬éœ€è¦åˆ›å»ºä¸€ä¸ªf17çš„å®ä¾‹ï¼Œä½†æ˜¯è¿™æ¬¡æˆ‘ä»¬éœ€è¦
 
-´´½¨µÄÊÇ¾ßÓĞÍêÕûµÄ¸üĞÂµÄÊµÀı£¬ÕâÊ±¿ÉÒÔ´´½¨ÁíÍâÒ»¸öoverlay£¨Fedora-guest-with-updates-1A£©
+åˆ›å»ºçš„æ˜¯å…·æœ‰å®Œæ•´çš„æ›´æ–°çš„å®ä¾‹ï¼Œè¿™æ—¶å¯ä»¥åˆ›å»ºå¦å¤–ä¸€ä¸ªoverlayï¼ˆFedora-guest-with-updates-1Aï¼‰
 
-¶øÕâ¸öoverlayµÄbacking fileÊÇ'Fed-w-updates.qcow2'£¨Ò»¸ö°üº¬ÁËÍêÕû¸üĞÂµÄ¾µÏñ£©:
+è€Œè¿™ä¸ªoverlayçš„backing fileæ˜¯'Fed-w-updates.qcow2'ï¼ˆä¸€ä¸ªåŒ…å«äº†å®Œæ•´æ›´æ–°çš„é•œåƒï¼‰:
 
 # qemu-img create -b /export/vmimages/Fed-w-updates.qcow2 -f qcow2 \
    /export/vmimages/Fedora-guest-with-updates-1A.qcow2
-ÎÒÃÇ¿ÉÒÔÊ¹ÓÃqemu-imgÃüÁîÀ´²é¿´¾µÏñµÄĞÅÏ¢£¬°üÀ¨ĞéÄâ´ÅÅÌ´óĞ¡£¬Ê¹ÓÃ´óĞ¡£¬backing fileÖ¸Ïò:
+æˆ‘ä»¬å¯ä»¥ä½¿ç”¨qemu-imgå‘½ä»¤æ¥æŸ¥çœ‹é•œåƒçš„ä¿¡æ¯ï¼ŒåŒ…æ‹¬è™šæ‹Ÿç£ç›˜å¤§å°ï¼Œä½¿ç”¨å¤§å°ï¼Œbacking fileæŒ‡å‘:
 
 # qemu-img info /export/vmimages/Fedora-guest-with-updates-1A.qcow2
-×¢Òâ: ×îĞÂ°æ±¾µÄqemu-img¿ÉÒÔµİ¹é²éÑ¯µ½ÕûÌõÍêÕûµÄÁ´:
+æ³¨æ„: æœ€æ–°ç‰ˆæœ¬çš„qemu-imgå¯ä»¥é€’å½’æŸ¥è¯¢åˆ°æ•´æ¡å®Œæ•´çš„é“¾:
 
 # qemu-img info --backing-chain /export/vmimages/Fedora-guest-with-updates-1A.qcow2
-Ãû´Ê½âÊÍSnapshot:
-ÄÚÖÃ¿ìÕÕ£¨Internal Snapshots£© -- µ¥¸öqcow2¾µÏñÎÄ¼ş´æ´¢ÁË°üÀ¨Êı¾İÒÔ¼°¿ìÕÕµÄ×´Ì¬ĞÅÏ¢£¬
+åè¯è§£é‡ŠSnapshot:
+å†…ç½®å¿«ç…§ï¼ˆInternal Snapshotsï¼‰ -- å•ä¸ªqcow2é•œåƒæ–‡ä»¶å­˜å‚¨äº†åŒ…æ‹¬æ•°æ®ä»¥åŠå¿«ç…§çš„çŠ¶æ€ä¿¡æ¯ï¼Œ
 
-ÄÚÖÃ¿ìÕÕÓÖ¿ÉÒÔÏ¸·ÖÒ»ÏÂ:-
+å†…ç½®å¿«ç…§åˆå¯ä»¥ç»†åˆ†ä¸€ä¸‹:-
 
-ÄÚÖÃ´ÅÅÌ¿ìÕÕ£¨Internal disk snapshot£©:
+å†…ç½®ç£ç›˜å¿«ç…§ï¼ˆInternal disk snapshotï¼‰:
 
-¿ìÕÕµãµÄ´ÅÅÌ×´Ì¬£¬Êı¾İºÍ¿ìÕÕ±£´æÔÚµ¥¸öqcow2ÎÄ¼şÖĞ£¬ĞéÄâ»úÔËĞĞ×´Ì¬ºÍ¹Ø±Õ×´Ì¬¶¼
+å¿«ç…§ç‚¹çš„ç£ç›˜çŠ¶æ€ï¼Œæ•°æ®å’Œå¿«ç…§ä¿å­˜åœ¨å•ä¸ªqcow2æ–‡ä»¶ä¸­ï¼Œè™šæ‹Ÿæœºè¿è¡ŒçŠ¶æ€å’Œå…³é—­çŠ¶æ€éƒ½
 
-¿ÉÒÔ´´½¨.
+å¯ä»¥åˆ›å»º.
 
-Libvirt Ê¹ÓÃ 'qemu-img' ÃüÁî´´½¨¹Ø»ú×´Ì¬µÄ´ÅÅÌ¿ìÕÕ.
-Libvirt Ê¹ÓÃ 'savevm' ÃüÁî´´½¨ÔËĞĞ×´Ì¬µÄ´ÅÅÌ¿ìÕÕ.
-ÄÚÖÃÏµÍ³»¹Ô­µã£¨Internal system checkpoint£©:
+Libvirt ä½¿ç”¨ 'qemu-img' å‘½ä»¤åˆ›å»ºå…³æœºçŠ¶æ€çš„ç£ç›˜å¿«ç…§.
+Libvirt ä½¿ç”¨ 'savevm' å‘½ä»¤åˆ›å»ºè¿è¡ŒçŠ¶æ€çš„ç£ç›˜å¿«ç…§.
+å†…ç½®ç³»ç»Ÿè¿˜åŸç‚¹ï¼ˆInternal system checkpointï¼‰:
 
-ÄÚ´æ×´Ì¬£¬Éè±¸×´Ì¬ºÍ´ÅÅÌ×´Ì¬£¬¿ÉÒÔÎªÔËĞĞÖĞµÄĞéÄâ»ú´´½¨£¬ËùÓĞĞÅÏ¢¶¼´æ´¢ÔÚ
+å†…å­˜çŠ¶æ€ï¼Œè®¾å¤‡çŠ¶æ€å’Œç£ç›˜çŠ¶æ€ï¼Œå¯ä»¥ä¸ºè¿è¡Œä¸­çš„è™šæ‹Ÿæœºåˆ›å»ºï¼Œæ‰€æœ‰ä¿¡æ¯éƒ½å­˜å‚¨åœ¨
 
-Í¬Ò»¸öqcow2ÎÄ¼şÖĞ£¬Ö»ÓĞÔÚÔËĞĞ×´Ì¬²ÅÄÜ´´½¨ÄÚÖÃÏµÍ³»¹Ô­µã.
+åŒä¸€ä¸ªqcow2æ–‡ä»¶ä¸­ï¼Œåªæœ‰åœ¨è¿è¡ŒçŠ¶æ€æ‰èƒ½åˆ›å»ºå†…ç½®ç³»ç»Ÿè¿˜åŸç‚¹.
 
-Libvirt Ê¹ÓÃ'savevm' ÃüÁîÀ´´´½¨ÕâÖÖ¿ìÕÕ
-ÍâÖÃ¿ìÕÕ£¨External Snapshots£© -- µ±Ò»¸ö¿ìÕÕ±»´´½¨Ê±£¬´´½¨Ê±µ±Ç°µÄ×´Ì¬±£´æÔÚµ±Ç°Ê¹ÓÃ
+Libvirt ä½¿ç”¨'savevm' å‘½ä»¤æ¥åˆ›å»ºè¿™ç§å¿«ç…§
+å¤–ç½®å¿«ç…§ï¼ˆExternal Snapshotsï¼‰ -- å½“ä¸€ä¸ªå¿«ç…§è¢«åˆ›å»ºæ—¶ï¼Œåˆ›å»ºæ—¶å½“å‰çš„çŠ¶æ€ä¿å­˜åœ¨å½“å‰ä½¿ç”¨
 
-µÄ´ÅÅÌÎÄ¼şÖĞ£¬¼´³ÉÎªÒ»¸öbacking file.
+çš„ç£ç›˜æ–‡ä»¶ä¸­ï¼Œå³æˆä¸ºä¸€ä¸ªbacking file.
 
-´ËÊ±Ò»¸öĞÂµÄoverlay±»´´½¨³öÀ´±£´æÍùºóµÄÊı¾İ.
+æ­¤æ—¶ä¸€ä¸ªæ–°çš„overlayè¢«åˆ›å»ºå‡ºæ¥ä¿å­˜å¾€åçš„æ•°æ®.
 
-Õâ¸öÒ²¿ÉÒÔÏ¸·ÖÒ»ÏÂ:-
+è¿™ä¸ªä¹Ÿå¯ä»¥ç»†åˆ†ä¸€ä¸‹:-
 
-ÍâÖÃ´ÅÅÌ¿ìÕÕ£¨External disk snapshot£©:
+å¤–ç½®ç£ç›˜å¿«ç…§ï¼ˆExternal disk snapshotï¼‰:
 
-´ÅÅÌµÄ¿ìÕÕ±»±£´æÔÚÒ»¸öÎÄ¼şÖĞ£¬´´½¨Ê±¼äµãÒÔºóµÄÊı¾İ±»¼ÇÂ¼µ½Ò»¸öĞÂµÄqcow2ÎÄ¼şÖĞ.
+ç£ç›˜çš„å¿«ç…§è¢«ä¿å­˜åœ¨ä¸€ä¸ªæ–‡ä»¶ä¸­ï¼Œåˆ›å»ºæ—¶é—´ç‚¹ä»¥åçš„æ•°æ®è¢«è®°å½•åˆ°ä¸€ä¸ªæ–°çš„qcow2æ–‡ä»¶ä¸­.
 
-Í¬Ñù¿ÉÒÔÔÚÔËĞĞºÍ¹Ø±Õ×´Ì¬´´½¨.
+åŒæ ·å¯ä»¥åœ¨è¿è¡Œå’Œå…³é—­çŠ¶æ€åˆ›å»º.
 
-Libvirt Ê¹ÓÃ 'transaction' ÃüÁîÀ´ÎªÔËĞĞ×´Ì¬´´½¨ÕâÖÖ¿ìÕÕ.
-Libvirt Ê¹ÓÃ'qemu-img' ÃüÁîÎª¹Ø±Õ×´Ì¬´´½¨ÕâÖÖ¿ìÕÕ(½ØÖ¹Ä¿Ç°¹¦ÄÜ»¹ÔÚ¿ª·¢ÖĞ).
-ÍâÖÃÏµÍ³»¹Ô­µã£¨External system checkpoint£©:
+Libvirt ä½¿ç”¨ 'transaction' å‘½ä»¤æ¥ä¸ºè¿è¡ŒçŠ¶æ€åˆ›å»ºè¿™ç§å¿«ç…§.
+Libvirt ä½¿ç”¨'qemu-img' å‘½ä»¤ä¸ºå…³é—­çŠ¶æ€åˆ›å»ºè¿™ç§å¿«ç…§(æˆªæ­¢ç›®å‰åŠŸèƒ½è¿˜åœ¨å¼€å‘ä¸­).
+å¤–ç½®ç³»ç»Ÿè¿˜åŸç‚¹ï¼ˆExternal system checkpointï¼‰:
 
-ĞéÄâ»úµÄ´ÅÅÌ×´Ì¬½«±»±£´æµ½Ò»¸öÎÄ¼şÖĞ£¬ÄÚ´æºÍÉè±¸µÄ×´Ì¬½«±»±£´æµ½ÁíÍâÒ»¸öĞÂµÄÎÄ¼şÖĞ£¬
+è™šæ‹Ÿæœºçš„ç£ç›˜çŠ¶æ€å°†è¢«ä¿å­˜åˆ°ä¸€ä¸ªæ–‡ä»¶ä¸­ï¼Œå†…å­˜å’Œè®¾å¤‡çš„çŠ¶æ€å°†è¢«ä¿å­˜åˆ°å¦å¤–ä¸€ä¸ªæ–°çš„æ–‡ä»¶ä¸­ï¼Œ
 
-£¨Õâ¸ö¹¦ÄÜÒ²»¹ÔÚ¿ª·¢ÖĞ£©.
+ï¼ˆè¿™ä¸ªåŠŸèƒ½ä¹Ÿè¿˜åœ¨å¼€å‘ä¸­ï¼‰.
 
-VM×´Ì¬£¨VM state£©:
+VMçŠ¶æ€ï¼ˆVM stateï¼‰:
 
-±£´æÔËĞĞ×´Ì¬ĞéÄâ»úµÄÄÚ´æÉè±¸×´Ì¬ĞÅÏ¢ÖÁÎÄ¼ş£¬¿ÉÒÔÍ¨¹ı´ËÎÄ¼ş»Ö¸´µ½±£´æÊ±µÄ×´Ì¬£¬ÓĞµãÀàËÆÏµÍ³
+ä¿å­˜è¿è¡ŒçŠ¶æ€è™šæ‹Ÿæœºçš„å†…å­˜è®¾å¤‡çŠ¶æ€ä¿¡æ¯è‡³æ–‡ä»¶ï¼Œå¯ä»¥é€šè¿‡æ­¤æ–‡ä»¶æ¢å¤åˆ°ä¿å­˜æ—¶çš„çŠ¶æ€ï¼Œæœ‰ç‚¹ç±»ä¼¼ç³»ç»Ÿ
 
-µÄĞİÃß.£¨×¢Òâ´´½¨VM×´Ì¬±£´æµÄÊ±ºòVM´ÅÅÌ±ØĞëÊÇÎ´·¢ÉúĞ´Èë¸Ä¶¯µÄ£©
+çš„ä¼‘çœ .ï¼ˆæ³¨æ„åˆ›å»ºVMçŠ¶æ€ä¿å­˜çš„æ—¶å€™VMç£ç›˜å¿…é¡»æ˜¯æœªå‘ç”Ÿå†™å…¥æ”¹åŠ¨çš„ï¼‰
 
-LibvirtÊ¹ÓÃ 'migrate' (to file)ÃüÁîÀ´Íê³ÉVM×´Ì¬×ª´¢.
-´´½¨snapshots
-Ã¿´Î²úÉúÒ»¸öÍâÖÃsnapshot£¬Ò»¸ö /new/ overlay ¾µÏñ¾Í»áËæÖ®Éú³É£¬¶øÇ°Ò»¸ö¾µÏñ¾Í±ä³ÉÁËÒ»¸ö¿ìÕÕ.
+Libvirtä½¿ç”¨ 'migrate' (to file)å‘½ä»¤æ¥å®ŒæˆVMçŠ¶æ€è½¬å‚¨.
+åˆ›å»ºsnapshots
+æ¯æ¬¡äº§ç”Ÿä¸€ä¸ªå¤–ç½®snapshotï¼Œä¸€ä¸ª /new/ overlay é•œåƒå°±ä¼šéšä¹‹ç”Ÿæˆï¼Œè€Œå‰ä¸€ä¸ªé•œåƒå°±å˜æˆäº†ä¸€ä¸ªå¿«ç…§.
 
-diskonlyÄÚÖÃ¿ìÕÕ´´½¨
+diskonlyå†…ç½®å¿«ç…§åˆ›å»º
 
-¼ÙÈçĞèÒªÎªÃûÎª'f17vm1'µÄĞéÄâ»ú´´½¨Ò»¸öÔËĞĞÌ¬»ò¹Ø±ÕÌ¬µÄÄÚÖÃ¿ìÕÕsnap1
+å‡å¦‚éœ€è¦ä¸ºåä¸º'f17vm1'çš„è™šæ‹Ÿæœºåˆ›å»ºä¸€ä¸ªè¿è¡Œæ€æˆ–å…³é—­æ€çš„å†…ç½®å¿«ç…§snap1
 
 # virsh snapshot-create-as f17vm1  snap1 snap1-desc
-ÁĞ³ö¿ìÕÕÁĞ±í£¬Ê¹ÓÃ*qemu-img*²é¿´info
+åˆ—å‡ºå¿«ç…§åˆ—è¡¨ï¼Œä½¿ç”¨*qemu-img*æŸ¥çœ‹info
 
 # virsh snapshot-list f17vm1
 # qemu-img info /home/kashyap/vmimages/f17vm1.qcow2
-disk-onlyÍâÖÃ¿ìÕÕ´´½¨ :
+disk-onlyå¤–ç½®å¿«ç…§åˆ›å»º :
 
-²é¿´ĞéÄâ»ú´ÅÅÌÁĞ±í
+æŸ¥çœ‹è™šæ‹Ÿæœºç£ç›˜åˆ—è¡¨
 
 # virsh domblklist f17-base
 Target     Source
@@ -180,7 +166,7 @@ Target     Source
 vda        /export/vmimages/f17-base.qcow2
 
 #
-´´½¨ÍâÖÃdisk-only´ÅÅÌ¿ìÕÕ£¨VM*ÔËĞĞÌ¬*£©:
+åˆ›å»ºå¤–ç½®disk-onlyç£ç›˜å¿«ç…§ï¼ˆVM*è¿è¡Œæ€*ï¼‰:
 
 # virsh snapshot-create-as --domain f17-base snap1 snap1-desc \
 --disk-only --diskspec vda,snapshot=external,file=/export/vmimages/sn1-of-f17-base.qcow2 \
@@ -188,8 +174,8 @@ vda        /export/vmimages/f17-base.qcow2
 Domain snapshot snap1 created
 #
 
-    * Ò»µ©ÉÏÃæµÄÃüÁî±»Ö´ĞĞ£¬ÔòÔ­À´µÄ¾µÏñf17-base½«±äÎªbacking file£¬Ò»¸öĞÂµÄ¾µÏñ±»´´½¨.
-ÏÖÔÚÔÙÁĞ±í²é¿´ĞéÄâ»ú´ÅÅÌ£¬Äã»á·¢ÏÖĞÂ²úÉúµÄ¾µÏñÒÑ¾­Í¶ÈëÊ¹ÓÃ.
+    * ä¸€æ—¦ä¸Šé¢çš„å‘½ä»¤è¢«æ‰§è¡Œï¼Œåˆ™åŸæ¥çš„é•œåƒf17-baseå°†å˜ä¸ºbacking fileï¼Œä¸€ä¸ªæ–°çš„é•œåƒè¢«åˆ›å»º.
+ç°åœ¨å†åˆ—è¡¨æŸ¥çœ‹è™šæ‹Ÿæœºç£ç›˜ï¼Œä½ ä¼šå‘ç°æ–°äº§ç”Ÿçš„é•œåƒå·²ç»æŠ•å…¥ä½¿ç”¨.
 
 # virsh domblklist f17-base
 Target     Source
@@ -197,49 +183,49 @@ Target     Source
 vda        /export/vmimages/sn1-of-f17-base.qcow2
 
 #
-¿ìÕÕ»Ø¹ö
-½ØÖ¹Ğ´´ËÎÄÖ®Ê±£¬»Ø¹öÖÁ'ÄÚÖÃ¿ìÕÕ'(system checkpoint»òdisk-only)ÊÇ¿ÉÒÔÊ¹ÓÃµÄ.
+å¿«ç…§å›æ»š
+æˆªæ­¢å†™æ­¤æ–‡ä¹‹æ—¶ï¼Œå›æ»šè‡³'å†…ç½®å¿«ç…§'(system checkpointæˆ–disk-only)æ˜¯å¯ä»¥ä½¿ç”¨çš„.
 
-ĞéÄâ»úf17vm1»Ø¹öÖÁ¿ìÕÕ'snap1'
+è™šæ‹Ÿæœºf17vm1å›æ»šè‡³å¿«ç…§'snap1'
 
 # virsh snapshot-revert --domain f17vm1 snap1
-Ê¹ÓÃ snapshot-revert »Ø¹ö 'ÍâÖÃ´ÅÅÌ¿ìÕÕ' ÉÔÎ¢¸´ÔÓĞ©£¬ĞèÒªÉæ¼°µ½ÉÔÎ¢¸´ÔÓµãµÄÎÊÌâ£¬
+ä½¿ç”¨ snapshot-revert å›æ»š 'å¤–ç½®ç£ç›˜å¿«ç…§' ç¨å¾®å¤æ‚äº›ï¼Œéœ€è¦æ¶‰åŠåˆ°ç¨å¾®å¤æ‚ç‚¹çš„é—®é¢˜ï¼Œ
 
-ĞèÒª¿¼ÂÇµÄÊÇºÏ²¢'base'ÖÁ'top'»¹ÊÇºÏ²¢'top'ÖÁ'base'.
+éœ€è¦è€ƒè™‘çš„æ˜¯åˆå¹¶'base'è‡³'top'è¿˜æ˜¯åˆå¹¶'top'è‡³'base'.
 
-Ò²¾ÍÊÇËµ£¬ÓĞÁ½ÖÖ·½Ê½¿ÉÒÔÑ¡Ôñ£¬ÍâÖÃ´ÅÅÌ¿ìÕÕÁ´µÄËõ¶Ì¿ÉÒÔÊ¹ÓÃ blockpull »ò blockcommit .
+ä¹Ÿå°±æ˜¯è¯´ï¼Œæœ‰ä¸¤ç§æ–¹å¼å¯ä»¥é€‰æ‹©ï¼Œå¤–ç½®ç£ç›˜å¿«ç…§é“¾çš„ç¼©çŸ­å¯ä»¥ä½¿ç”¨ blockpull æˆ– blockcommit .
 
-½ØÖ¹Ä¿Ç°ÉÏÓÎÉçÇøÈÔÈ»ÔÚÅ¬Á¦ÍêÉÆÕâÏî¹¦ÄÜ.
+æˆªæ­¢ç›®å‰ä¸Šæ¸¸ç¤¾åŒºä»ç„¶åœ¨åŠªåŠ›å®Œå–„è¿™é¡¹åŠŸèƒ½.
 
-ºÏ²¢¿ìÕÕÎÄ¼ş
-ÍâÖÃ¿ìÕÕ·Ç³£ÓĞÓÃ£¬µ«ÕâÀïÓĞÒ»¸öÎÊÌâ¾ÍÊÇÈçºÎºÏ²¢¿ìÕÕÎÄ¼şÀ´Ëõ¶ÌÁ´µÄ³¤¶È£¬ÈçÉÏËùÊöÕâÀï
+åˆå¹¶å¿«ç…§æ–‡ä»¶
+å¤–ç½®å¿«ç…§éå¸¸æœ‰ç”¨ï¼Œä½†è¿™é‡Œæœ‰ä¸€ä¸ªé—®é¢˜å°±æ˜¯å¦‚ä½•åˆå¹¶å¿«ç…§æ–‡ä»¶æ¥ç¼©çŸ­é“¾çš„é•¿åº¦ï¼Œå¦‚ä¸Šæ‰€è¿°è¿™é‡Œ
 
-ÓĞÁ½ÖÖ·½Ê½:
+æœ‰ä¸¤ç§æ–¹å¼:
 
-blockcommit: ´Ó top ºÏ²¢Êı¾İµ½ base (¼´ºÏ²¢overlaysÖÁbacking files).
-blockpull: ½«backing fileÊı¾İºÏ²¢ÖÁoverlayÖĞ.´Ó base µ½ top .
+blockcommit: ä» top åˆå¹¶æ•°æ®åˆ° base (å³åˆå¹¶overlaysè‡³backing files).
+blockpull: å°†backing fileæ•°æ®åˆå¹¶è‡³overlayä¸­.ä» base åˆ° top .
 blockcommit
-blockcommit¿ÉÒÔÈÃÄã½«'top'¾µÏñ(ÔÚÍ¬Ò»Ìõbacking fileÁ´ÖĞ)ºÏ²¢ÖÁµ×²ãµÄ'base'¾µÏñ.
+blockcommitå¯ä»¥è®©ä½ å°†'top'é•œåƒ(åœ¨åŒä¸€æ¡backing fileé“¾ä¸­)åˆå¹¶è‡³åº•å±‚çš„'base'é•œåƒ.
 
-Ò»µ© blockcommit Ö´ĞĞÍê³É£¬´¦ÓÚ×îÉÏÃæµÄoverlayÁ´¹ØÏµ½«±»Ö¸Ïòµ½µ×²ãµÄoverlay»òbase.
+ä¸€æ—¦ blockcommit æ‰§è¡Œå®Œæˆï¼Œå¤„äºæœ€ä¸Šé¢çš„overlayé“¾å…³ç³»å°†è¢«æŒ‡å‘åˆ°åº•å±‚çš„overlayæˆ–base.
 
-ÕâÔÚ´´½¨ÁËºÜ³¤Ò»ÌõÁ´Ö®ºóÓÃÀ´Ëõ¶ÌÁ´³¤¶ÈµÄÊ±ºòÊ®·ÖÓĞÓÃ.
+è¿™åœ¨åˆ›å»ºäº†å¾ˆé•¿ä¸€æ¡é“¾ä¹‹åç”¨æ¥ç¼©çŸ­é“¾é•¿åº¦çš„æ—¶å€™ååˆ†æœ‰ç”¨.
 
-ÏÂÃæÀ´¸öÍ¼ËµÃ÷ÏÂ:
+ä¸‹é¢æ¥ä¸ªå›¾è¯´æ˜ä¸‹:
 
-ÎÒÃÇÏÖÔÚÓĞÒ»¸ö¾µÏñ½Ğ'RootBase'£¬ÓµÓĞ4¸öÍâÖÃ¿ìÕÕ£¬'Active'Îªµ±Ç°VMĞ´ÈëÊı¾İµÄ£¬
+æˆ‘ä»¬ç°åœ¨æœ‰ä¸€ä¸ªé•œåƒå«'RootBase'ï¼Œæ‹¥æœ‰4ä¸ªå¤–ç½®å¿«ç…§ï¼Œ'Active'ä¸ºå½“å‰VMå†™å…¥æ•°æ®çš„ï¼Œ
 
-Ê¹ÓÃ'blockcommit'¿ÉÒÔÓĞÒÔÏÂ¶àÖÖcase :
+ä½¿ç”¨'blockcommit'å¯ä»¥æœ‰ä»¥ä¸‹å¤šç§case :
 
-ºÏ²¢Snap-1, Snap-2 and Snap-3 ÖÁ 'RootBase'
-Ö»ºÏ²¢Snap-1 and Snap-2 ÖÁ RootBase
-Ö»ºÏ²¢Snap-1 ÖÁ RootBase
-ºÏ²¢Snap-2 ÖÁ Snap-1
-ºÏ²¢Snap-3 ÖÁ Snap-2
-ºÏ²¢Snap-2 ºÍ Snap-3 ÖÁ Snap-1
-×¢: ºÏ²¢'Active'²ã(×î¶¥²¿µÄoverlay)ÖÁbacking_filesµÄ¹¦ÄÜ»¹ÔÚ¿ª·¢ÖĞ.
+åˆå¹¶Snap-1, Snap-2 and Snap-3 è‡³ 'RootBase'
+åªåˆå¹¶Snap-1 and Snap-2 è‡³ RootBase
+åªåˆå¹¶Snap-1 è‡³ RootBase
+åˆå¹¶Snap-2 è‡³ Snap-1
+åˆå¹¶Snap-3 è‡³ Snap-2
+åˆå¹¶Snap-2 å’Œ Snap-3 è‡³ Snap-1
+æ³¨: åˆå¹¶'Active'å±‚(æœ€é¡¶éƒ¨çš„overlay)è‡³backing_filesçš„åŠŸèƒ½è¿˜åœ¨å¼€å‘ä¸­.
 
-(ÏÂÍ¼½âÊÍcase (6))
+(ä¸‹å›¾è§£é‡Šcase (6))
 
 Figure-3
 
@@ -260,13 +246,13 @@ Figure-3
 | RootBase   <---  Snap-1    |<---------------------------------|  Snap-4    |
 |            |  |            |       Backing File               | (Active)   |
 '------------'  '------------'                                  '------------'
-¾Ù¸öÀı×Ó£¬ÓĞÒÔÏÂ³¡¾°£º
+ä¸¾ä¸ªä¾‹å­ï¼Œæœ‰ä»¥ä¸‹åœºæ™¯ï¼š
 
-µ±Ç°: [base] <- sn1 <- sn2 <- sn3 <- sn4(this is active)
+å½“å‰: [base] <- sn1 <- sn2 <- sn3 <- sn4(this is active)
 
-Ä¿±ê: [base] <- sn1 <- sn4 (Èç´ËÀ´¶ªÆúsn2,sn3)
+ç›®æ ‡: [base] <- sn1 <- sn4 (å¦‚æ­¤æ¥ä¸¢å¼ƒsn2,sn3)
 
-  ÏÂÃæÓĞÁ½ÖÖ·½Ê½£¬method-a¸ü¿ì,method-b ÂıĞ©£¬µ«ÊÇsn2ÓĞĞ§¿ÉÓÃ. (VMÔËĞĞÌ¬).
+  ä¸‹é¢æœ‰ä¸¤ç§æ–¹å¼ï¼Œmethod-aæ›´å¿«,method-b æ…¢äº›ï¼Œä½†æ˜¯sn2æœ‰æ•ˆå¯ç”¨. (VMè¿è¡Œæ€).
 
             (method-a):
 
@@ -282,7 +268,7 @@ Figure-3
 # virsh blockcommit --domain f17 vda  --base /export/vmimages/sn1.qcow2  \
     --top /export/vmimages/sn2.qcow2 --wait --verbose
  
-×¢: Èç¹ûÊÖ¹¤Ö´ĞĞ*qemu-img*ÃüÁîÍê³ÉµÄ»°, ÏÖÔÚ»¹Ö»ÄÜÓÃmethod-b.
+æ³¨: å¦‚æœæ‰‹å·¥æ‰§è¡Œ*qemu-img*å‘½ä»¤å®Œæˆçš„è¯, ç°åœ¨è¿˜åªèƒ½ç”¨method-b.
 Figure-4
 
 .------------.  .------------.  .------------.  .------------.  .------------.
@@ -302,14 +288,14 @@ Figure-4
 | RootBase   |                                                  |  Snap-4    |
 |            |<-------------------------------------------------| (Active)   |
 '------------'                  Backing File                    '------------'
-ÉÏÍ¼ÑİÊ¾ÁËcase1µÄblockcommit×ßÏò£¬ÏÖÔÚsn4µÄbacking fileÖ¸Ïòrootbase.
+ä¸Šå›¾æ¼”ç¤ºäº†case1çš„blockcommitèµ°å‘ï¼Œç°åœ¨sn4çš„backing fileæŒ‡å‘rootbase.
 
 blockpull
-blockpull£¨qemuÖĞÒ²³Æ×÷'block stream'£©¿ÉÒÔ½«backingºÏ²¢ÖÁactive£¬ÓëblockcommitÕıºÃÏà·´.
+blockpullï¼ˆqemuä¸­ä¹Ÿç§°ä½œ'block stream'ï¼‰å¯ä»¥å°†backingåˆå¹¶è‡³activeï¼Œä¸blockcommitæ­£å¥½ç›¸å.
 
-½ØÖ¹Ä¿Ç°Ö»ÄÜ½«backing fileºÏ²¢ÖÁµ±Ç°Ê¹ÓÃµÄactiveÖĞ£¬Ò²¾ÍÊÇËµ»¹²»Ö§³ÖÖ¸¶¨topµÄºÏ²¢.
+æˆªæ­¢ç›®å‰åªèƒ½å°†backing fileåˆå¹¶è‡³å½“å‰ä½¿ç”¨çš„activeä¸­ï¼Œä¹Ÿå°±æ˜¯è¯´è¿˜ä¸æ”¯æŒæŒ‡å®štopçš„åˆå¹¶.
 
-ÉèÏëÒ»¸öÏÂÃæµÄ³¡¾°:
+è®¾æƒ³ä¸€ä¸ªä¸‹é¢çš„åœºæ™¯:
 
 Figure-5
 
@@ -330,19 +316,19 @@ Figure-5
      | RootBase   |                                           |  Snap-4    |
      |            | <---------------------------------------- | (Active)   |
      '------------'                 Backing File              '------------'
-Ê¹ÓÃblockpullÎÒÃÇ¿ÉÒÔ½«snap-1/2/3ÖĞµÄÊı¾İºÏ²¢ÖÁactive²ã£¬×îÖÕrootbase½«±ä³ÉactiveµÄÖ±½Óºó¶Ë.
+ä½¿ç”¨blockpullæˆ‘ä»¬å¯ä»¥å°†snap-1/2/3ä¸­çš„æ•°æ®åˆå¹¶è‡³activeå±‚ï¼Œæœ€ç»ˆrootbaseå°†å˜æˆactiveçš„ç›´æ¥åç«¯.
 
-ÃüÁîÈçÏÂ:
+å‘½ä»¤å¦‚ä¸‹:
 
-¼ÙÉè¿ìÕÕÒÑ¾­Ê¹ÓÃ ´´½¨Snapshots Ğ¡½ÚÖĞµÄ·½Ê½Íê³É:
+å‡è®¾å¿«ç…§å·²ç»ä½¿ç”¨ åˆ›å»ºSnapshots å°èŠ‚ä¸­çš„æ–¹å¼å®Œæˆ:
 
-Èç*Figure-5*ÖĞÃèÊöµÄ-- [RootBase] <- [Active].
+å¦‚*Figure-5*ä¸­æè¿°çš„-- [RootBase] <- [Active].
 
 # virsh blockpull --domain RootBase  \
   --path /var/lib/libvirt/images/active.qcow2  \
   --base /var/lib/libvirt/images/RootBase.qcow2  \
   --wait --verbose
-ºóĞøµÄ¹¤×÷ÊÇÎÒÃÇĞèÒªÊ¹ÓÃvirshÀ´ÇåÀíµô²»ÓÃµÄ¿ìÕÕ
+åç»­çš„å·¥ä½œæ˜¯æˆ‘ä»¬éœ€è¦ä½¿ç”¨virshæ¥æ¸…ç†æ‰ä¸ç”¨çš„å¿«ç…§
 
 # virsh snapshot-delete --domain RootBase Snap-3 --metadata
 # virsh snapshot-delete --domain RootBase Snap-2 --metadata
@@ -369,11 +355,11 @@ Figure-6
                                                                 'Standalone'
                                                                 (w/o backing
                                                                 file)
-ÉÏÍ¼±íÊ¾µÄÊÇ½«ËùÓĞbacking fileÈ«²¿ºÏ²¢ÖÁactive
+ä¸Šå›¾è¡¨ç¤ºçš„æ˜¯å°†æ‰€æœ‰backing fileå…¨éƒ¨åˆå¹¶è‡³active
 
-ÈçÏÂÖ´ĞĞÃüÁî:
+å¦‚ä¸‹æ‰§è¡Œå‘½ä»¤:
 
-(1) ÔÚÎÒÃÇÖ´ĞĞºÏ²¢ *Ö®Ç°* ²é¿´Ò»ÏÂ¿ìÕÕµÄ´óĞ¡(×¢Òâ¹Û²ì'Active'):
+(1) åœ¨æˆ‘ä»¬æ‰§è¡Œåˆå¹¶ *ä¹‹å‰* æŸ¥çœ‹ä¸€ä¸‹å¿«ç…§çš„å¤§å°(æ³¨æ„è§‚å¯Ÿ'Active'):
     ::
 
         # ls -lash /var/lib/libvirt/images/RootBase.img
@@ -385,7 +371,7 @@ Figure-6
         456K -rw-------. 1 qemu qemu 512K Oct 11 17:56 /var/lib/libvirt/images/Snap-3.qcow2
         2.9M -rw-------. 1 qemu qemu 3.0M Oct 11 18:10 /var/lib/libvirt/images/Active.qcow2
 
-(2) µ¥¶À¼ì²éÏÂ 'Active' ËùÖ¸ÏòµÄbacking file ::
+(2) å•ç‹¬æ£€æŸ¥ä¸‹ 'Active' æ‰€æŒ‡å‘çš„backing file ::
 
         # qemu-img info /var/lib/libvirt/images/Active.qcow2
         image: /var/lib/libvirt/images/Active.qcow2
@@ -395,14 +381,14 @@ Figure-6
         cluster_size: 65536
         backing file: /var/lib/libvirt/images/Snap-3.qcow2
 
-(3) ¿ªÊ¼ **blockpull** ²Ù×÷.
+(3) å¼€å§‹ **blockpull** æ“ä½œ.
     ::
 
         # virsh blockpull --domain ptest2-base --path /var/lib/libvirt/images/Active.qcow2 --wait --verbose
         Block Pull: [100 %]
         Pull complete
 
-(4) ÔÙ¼ì²éÏÂ¿ìÕÕ´óĞ¡£¬ 'Active'±äµÃºÜ´ó
+(4) å†æ£€æŸ¥ä¸‹å¿«ç…§å¤§å°ï¼Œ 'Active'å˜å¾—å¾ˆå¤§
     ::
 
         # ls -lash /var/lib/libvirt/images/*Snap*
@@ -412,7 +398,7 @@ Figure-6
         1011M -rw-------. 1 qemu qemu 3.0M Oct 11 18:29 /var/lib/libvirt/images/Active.qcow2
 
 
-(5) ¼ì²é'Active'ĞÅÏ¢£¬ÏÖÔÚËüÒÑ¾­²»ĞèÒªbacking fileÁË£¬ÕıÈç*Figure-6*ËùÊ¾::
+(5) æ£€æŸ¥'Active'ä¿¡æ¯ï¼Œç°åœ¨å®ƒå·²ç»ä¸éœ€è¦backing fileäº†ï¼Œæ­£å¦‚*Figure-6*æ‰€ç¤º::
 
         # qemu-img info /var/lib/libvirt/images/Active.qcow2
         image: /var/lib/libvirt/images/Active.qcow2
@@ -421,59 +407,59 @@ Figure-6
         disk size: 1.0G
         cluster_size: 65536
 
-(6) ÇåÀíÏÖ³¡
+(6) æ¸…ç†ç°åœº
     ::
 
         # virsh snapshot-delete --domain RootBase Snap-3 --metadata
 
-(7) ÏÖÔÚ»¹¿ÉÒÔÊ¹ÓÃÏÂ guestfish  **READ-ONLY**  Ä£Ê½À´¼ì²éÏÂ´ÅÅÌÄÚÈİ( *--ro* Ñ¡Ïî)
+(7) ç°åœ¨è¿˜å¯ä»¥ä½¿ç”¨ä¸‹ guestfish  **READ-ONLY**  æ¨¡å¼æ¥æ£€æŸ¥ä¸‹ç£ç›˜å†…å®¹( *--ro* é€‰é¡¹)
     ::
 
         # guestfish --ro -i -a /var/lib/libvirt/images/Active.qcow2
-¿ìÕÕÉ¾³ı (and 'offline commit')
-É¾³ı£¨live/offline£©×´Ì¬µÄ*ÄÚÖÃ¿ìÕÕ*ºÜ·½±ã ::
+å¿«ç…§åˆ é™¤ (and 'offline commit')
+åˆ é™¤ï¼ˆlive/offlineï¼‰çŠ¶æ€çš„*å†…ç½®å¿«ç…§*å¾ˆæ–¹ä¾¿ ::
 # virsh snapshot-delete --domain f17vm --snapshotname snap6
 
 [OR]
 
 # virsh snapshot-delete f17vm snap6
-libvirtÏÖÔÚ»¹Ã»ÓĞÉ¾³ıÍâÖÃ¿ìÕÕµÄ¹¦ÄÜ£¬µ«ÊÇ¿ÉÒÔÊ¹ÓÃ*qemu-img*ÃüÁîÀ´Íê³É.
+libvirtç°åœ¨è¿˜æ²¡æœ‰åˆ é™¤å¤–ç½®å¿«ç…§çš„åŠŸèƒ½ï¼Œä½†æ˜¯å¯ä»¥ä½¿ç”¨*qemu-img*å‘½ä»¤æ¥å®Œæˆ.
 
-±ÈÈçÎÒÃÇÓĞÕâÑùÒ»ÌõÁ´(VM*offline*×´Ì¬): base <- sn1 <- sn2 <- sn3
+æ¯”å¦‚æˆ‘ä»¬æœ‰è¿™æ ·ä¸€æ¡é“¾(VM*offline*çŠ¶æ€): base <- sn1 <- sn2 <- sn3
 
-ÏÖÔÚÉ¾³ıµÚ¶ş¸ö¿ìÕÕ(sn2).ÓĞÁ½ÖÖ·½Ê½:
+ç°åœ¨åˆ é™¤ç¬¬äºŒä¸ªå¿«ç…§(sn2).æœ‰ä¸¤ç§æ–¹å¼:
 
 Method (1): base <- sn1 <- sn3 (by copying sn2 into sn1)
 Method (2): base <- sn1 <- sn3 (by copying sn2 into sn3)
 Method (1)
 (by copying sn2 into sn1)
 
-×¢Òâ: ±ØĞë±£Ö¤sn1Ã»ÓĞ±»ÆäËû¿ìÕÕ×÷Îªºó¶Ë,²»È»¾Í¹ÒÁË!!
+æ³¨æ„: å¿…é¡»ä¿è¯sn1æ²¡æœ‰è¢«å…¶ä»–å¿«ç…§ä½œä¸ºåç«¯,ä¸ç„¶å°±æŒ‚äº†!!
 
 offline commit
 
 # qemu-img commit sn2.qcow2
-½«»á*commit*ËùÓĞÔÚsn2ÖĞµÄ¸Ä¶¯µ½sn2µÄbacking file(sn1).
-qemu-img commitºÍvirsh blockcommitÀàËÆ
-ÏÖÔÚ°Ñsn3µÄºó¶ËÖ¸Ïòµ½sn1.
+å°†ä¼š*commit*æ‰€æœ‰åœ¨sn2ä¸­çš„æ”¹åŠ¨åˆ°sn2çš„backing file(sn1).
+qemu-img commitå’Œvirsh blockcommitç±»ä¼¼
+ç°åœ¨æŠŠsn3çš„åç«¯æŒ‡å‘åˆ°sn1.
 
 # qemu-img rebase -u -b sn1.qcow2 sn3.qcow2
-×¢Òâ: -u´ú±í'Unsafe mode' -- ´ËÄ£Ê½ÏÂ½ö½öĞŞ¸ÄÁËÖ¸Ïòµ½µÄbacking fileÃû×Ö£¬±ØĞë½÷É÷²Ù×÷.
-ÏÖÔÚ¿ÉÒÔÖ±½ÓÉ¾³ısn2
+æ³¨æ„: -uä»£è¡¨'Unsafe mode' -- æ­¤æ¨¡å¼ä¸‹ä»…ä»…ä¿®æ”¹äº†æŒ‡å‘åˆ°çš„backing fileåå­—ï¼Œå¿…é¡»è°¨æ…æ“ä½œ.
+ç°åœ¨å¯ä»¥ç›´æ¥åˆ é™¤sn2
 
 # rm sn2.qcow2
 Method (2)
 (by copying sn2 into sn3)
 
-ºÏ²¢Êı¾İ£¬rebaseºó¶Ë:
+åˆå¹¶æ•°æ®ï¼Œrebaseåç«¯:
 
 # qemu-img rebase -b sn1.qcow2 sn3.qcow2
-Î´Ê¹ÓÃ-uÄ£Ê½µÄrebase½«°ÑÊı¾İÒ²Ò»²¢ºÏ²¢¹ıÈ¥£¬¼´sn2µÄÊı¾İĞ´Èëµ½sn3.
-»»ÑÔÖ®: ÕâÀïÊ¹ÓÃµÄ'Safe mode',Ò²ÊÇÄ¬ÈÏÄ£Ê½ --¶Ôsn3¶øÑÔÈÎºÎ´Ó
-qemu-img rebase(Ã»ÓĞ-u)ºÍºÍvirsh blockpullÀàËÆ.
-backingfile£¨sn1£©µ½¾ÉµÄbackingfile£¨sn2£©Ö®¼ä·¢ÉúµÄ²îÒì¸Ä¶¯¶¼½«±»ºÏ²¢µ½sn3ÖĞ.
+æœªä½¿ç”¨-uæ¨¡å¼çš„rebaseå°†æŠŠæ•°æ®ä¹Ÿä¸€å¹¶åˆå¹¶è¿‡å»ï¼Œå³sn2çš„æ•°æ®å†™å…¥åˆ°sn3.
+æ¢è¨€ä¹‹: è¿™é‡Œä½¿ç”¨çš„'Safe mode',ä¹Ÿæ˜¯é»˜è®¤æ¨¡å¼ --å¯¹sn3è€Œè¨€ä»»ä½•ä»
+qemu-img rebase(æ²¡æœ‰-u)å’Œå’Œvirsh blockpullç±»ä¼¼.
+backingfileï¼ˆsn1ï¼‰åˆ°æ—§çš„backingfileï¼ˆsn2ï¼‰ä¹‹é—´å‘ç”Ÿçš„å·®å¼‚æ”¹åŠ¨éƒ½å°†è¢«åˆå¹¶åˆ°sn3ä¸­.
 
-ÏÖÔÚ¿ÉÒÔÉ¾³ısn2ÁË
+ç°åœ¨å¯ä»¥åˆ é™¤sn2äº†
 
 # rm sn2.qcow2
 --------------------------------------------------------------------
@@ -484,7 +470,7 @@ backingfile£¨sn1£©µ½¾ÉµÄbackingfile£¨sn2£©Ö®¼ä·¢ÉúµÄ²îÒì¸Ä¶¯¶¼½«±»ºÏ²¢µ½sn3ÖĞ.
 
 
 
- Harald SkardalÎÊ£º
+ Harald Skardalé—®ï¼š
 
 I have a service that takes new live KVM snapshots Si regularly, keeps a fixed number N (Si ,..,Si-N+1), and therefore needs to delete Si-N in this cycle.
 
@@ -492,7 +478,7 @@ Until libvirt includes support for this capability that is said to be available 
 
 The development environment is Fedora 18 with qemu, libvirtd and libvirt upgrades to the more recent stable versions.
 
-Eric Blake´ğ£º
+Eric Blakeç­”ï¼š
 
 Are you using the fedora-virt-preview repo?  If so, that gives you:
 qemu-1.4.0-1.fc18.x86_64
