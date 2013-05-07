@@ -1,0 +1,118 @@
+libguestfs研究
+
+1. 官网libguestfs
+
+2. 初探
+Fedora Desktop 18
+2.1. yum install "*guestf*"
+2.2. 准备img, raw , windows 2003
+2.3  
+使用virt-inspector获得镜像文件信息。
+[root@localhost images]# virt-inspector -a windows2003.img 
+<?xml version="1.0"?>
+<operatingsystems>
+  <operatingsystem>
+    <root>/dev/sda1</root>
+    <name>windows</name>
+    <arch>i386</arch>
+    <distro>windows</distro>
+    <product_name>Microsoft Windows Server 2003</product_name>
+    <major_version>5</major_version>
+    <minor_version>2</minor_version>
+    <windows_systemroot>/WINDOWS</windows_systemroot>
+    <windows_current_control_set>ControlSet001</windows_current_control_set>
+    <hostname>david-5y95osd84</hostname>
+    <format>installed</format>
+    <mountpoints>
+      <mountpoint dev="/dev/sda1">/</mountpoint>
+    </mountpoints>
+    <filesystems>
+      <filesystem dev="/dev/sda1">
+        <type>ntfs</type>
+        <uuid>7A381E26381DE245</uuid>
+      </filesystem>
+    </filesystems>
+    <drive_mappings>
+      <drive_mapping name="C">/dev/sda1</drive_mapping>
+    </drive_mappings>
+    <applications>
+      <application>
+        <name>DriverGenius</name>
+        <display_name>驱动精灵</display_name>
+        <version>2013</version>
+        <publisher>驱动之家</publisher>
+        <url>http://www.mydrivers.com/</url>
+      </application>
+    </applications>
+  </operatingsystem>
+</operatingsystems>
+
+
+---------------------------------------------------------------
+virt-copy-in
+virt-cat 使用 （由于虚拟机运行时使用，导致虚拟机系统内部报错。写操作，
+是需要关机进行）
+[root@localhost images]# touch aaa
+[root@localhost images]# echo "aaaa" > aaa 
+[root@localhost images]# virt-copy-in -a windows2003.img aaa /
+[root@localhost images]# virt-cat -a windows2003.img /aaa
+aaaa
+
+
+---------------------------------------------------------------
+
+guestfish交互命令，使用
+
+[root@localhost images]# guestfish --rw -i -a /var/lib/libvirt/images/windows2003.img 
+
+Welcome to guestfish, the libguestfs filesystem interactive shell for
+editing virtual machine filesystems.
+
+Type: 'help' for help on commands
+      'man' to read the manual
+      'quit' to quit the shell
+
+Operating system: Microsoft Windows Server 2003
+/dev/sda1 mounted on /
+
+><fs> ls
+ls should have 1 parameter(s)
+type 'help ls' for help on ls
+><fs> list-filesystems
+/dev/sda1: ntfs
+><fs> cat /
+/aaa                        /MSDOS.SYS
+/AUTOEXEC.BAT               /MyDrivers
+/bootfont.bin               /NTDETECT.COM
+/boot.ini                   /ntldr
+/CONFIG.SYS                 /pagefile.sys
+/dev/sda                    /Program Files
+/dev/sda1                   /System Volume Information
+/Documents and Settings     /WINDOWS
+/IO.SYS                     /wmpub
+><fs> cat /aaa 
+aaaa
+
+---------------------------------------------------------------
+
+
+guestmount 命令使用(官方文档说明You must not use guestmount in read-write mode on live virtual machines. If you do this, you risk disk corruption in the VM.)
+所以运行中的虚拟机不要写，会出现未知错误，
+另，通过virsh list, 会发现，一个guestfs-k0hn5l5dmiigqw0z虚拟机，它应该就是
+guestfs获得disk文件系统的机制。
+
+[root@localhost images]# guestmount -a windows2003.img --ro -i /mnt
+[root@localhost images]# cd /mnt/
+[root@localhost mnt]# ls
+aaa           CONFIG.SYS              MyDrivers     Program Files
+AUTOEXEC.BAT  Documents and Settings  NTDETECT.COM  System Volume Information
+bootfont.bin  IO.SYS                  ntldr         WINDOWS
+boot.ini      MSDOS.SYS               pagefile.sys  wmpub
+[root@localhost mnt]# cd ..
+[root@localhost /]# virsh list
+ Id    名称                         状态
+----------------------------------------------------
+ 13    windows2003                    running
+ 22    guestfs-k0hn5l5dmiigqw0z       running
+
+
