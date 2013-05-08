@@ -116,3 +116,18 @@ boot.ini      MSDOS.SYS               pagefile.sys  wmpub
  22    guestfs-k0hn5l5dmiigqw0z       running
 
 
+ 2. 进阶：
+ 
+ 环境ubuntu 12.04 amd-64
+ 
+ apt-get install guestfsd libguestfs-dev guestfish libguestfs0 libguestfs-tools python-guestfs
+ 
+ fix ubuntu 12.04 bug
+ 1. apt-get install febootstrap 
+ 2. febootstrap -V 确保版本大于或等于febootstrap 3.14
+ 3. apt-get install seabios
+ 4. ~# dpkg-query -l | grep seabios
+ ii  seabios                          0.6.2-0ubuntu2.1      legacy BIOS implementation which can be used as a coreboot payload
+ 确保seabios版本大于等于0.6.2-0ubuntu2.1
+ 
+ libguestfs-test-tool
