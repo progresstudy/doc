@@ -115,6 +115,35 @@ boot.ini      MSDOS.SYS               pagefile.sys  wmpub
  13    windows2003                    running
  22    guestfs-k0hn5l5dmiigqw0z       running
 
+----------------------------------------------------------------------------
+
+[root@localhost images]# virt-ls -a windows2003.img /
+AUTOEXEC.BAT
+CONFIG.SYS
+Documents and Settings
+IO.SYS
+MSDOS.SYS
+MyDrivers
+NTDETECT.COM
+Program Files
+System Volume Information
+WINDOWS
+aaa
+boot.ini
+bootfont.bin
+ntldr
+pagefile.sys
+the-test-file
+wmpub
+
+--------------------------------------------------------------------------
+
+virt-cat / virt-edit 查看和编辑镜像中文件
+virt-df 查看镜像磁盘使用
+[root@localhost images]# virt-df -a windows2003.img 
+Filesystem                           1K-blocks       Used  Available  Use%
+windows2003.img:/dev/sda                   282         16        252    6%
+
 
  2. 进阶：
  
@@ -131,3 +160,14 @@ boot.ini      MSDOS.SYS               pagefile.sys  wmpub
  确保seabios版本大于等于0.6.2-0ubuntu2.1
  
  libguestfs-test-tool
+
+
+
+3. 更有意思的virt命令
+
+virt-list-filesystems and virt-list-partitions
+查看镜像的分区表
+
+virt-make-fs 直接对镜像分区并拷贝到分区中。
+
+virt-rescue/virt-resize/virt-v2v/virt-what/virt-who/virt-win-reg

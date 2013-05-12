@@ -1,0 +1,6 @@
+Inject file into vm
+
+1. loop
+
+2. kvm-nbd
+3. guestfs
