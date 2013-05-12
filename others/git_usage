@@ -1,0 +1,182 @@
+ Git 建立 Local Repository
+
+    $ mkdir project; cd project
+    $ git init
+    $ echo "hello" > hello.txt
+    $ git add .
+    $ git commit -m 'initial'
+
+Git clone 資料, 資料修改後上傳
+
+    $ git clone http://git.example.com/project.git
+    $ cd project
+    $ touch new_file.txt
+    $ git add .
+    $ git commit -m 'add new_file.txt'
+    $ git push origin master
+    $ git pull # 拉看看有沒有更新
+
+Git clone 資料, 資料修改後上傳.(分兩個目錄測試)
+
+    $ mkdir /tmp/a /tmp/b
+    $ cd /tmp/a
+    $ git clone http://example.com/project_name.git
+    $ cd /tmp/b
+    $ git clone http://example.com/project_name.git
+    $ echo "hello" > hello.html
+    $ git add hello.html
+    $ git commit -m 'add hello.html' # local commit.
+    $ git push # 推到 Server 上.
+    $ cd /tmp/a
+    $ git pull # 會看到 hello.html
+
+Local Repository
+建立 Local Repository 測試
+
+    $ mkdir test; cd test
+    $ git init
+
+建立新的 branch (new-branch), 並於 branch 去新增檔案
+
+    $ git branch new-branch # master
+    $ git branch # master
+     * master
+       new-branch
+    $ git checkout new-branch # 切換到新的 branch
+    $ git branch # new-branch
+       master
+     * new-branch
+
+測試 Git staging area (git add . 之後的修改, 不會被 commit 進去)
+
+    $ touch new-branch_file.txt # new-branch
+    $ git add . # new-branch
+    $ echo "contents." > new-branch_file.txt # new-branch
+    $ git commit # new-branch, commit 的 new-branch_file.txt 會是空的, 因為修改是在 "git add ." 之後.
+
+修改過的資料, 不要 commit, 想直接切換到 master(使用 Git stash 將修改紀錄暫存, 將目前 new-branch 的資料 merge 到 mastermaster)
+
+    $ git status # new-branch, 會顯示 new-branch_file.txt 有修改, 尚未 commit.
+    $ git checkout master # new-branch, 切換回 master, 會出現錯誤: "You have local changes"
+    $ git stash # new-branch, 先把修改的先暫存下來, 先不 commit, 之後取出可用 git stash pop 或 git stash apply
+    $ git status # new-branch, 會顯示 nothing to commit (暫時先不丟進 commit 裡面)
+    $ git checkout master # master
+    $ git merge new-branch # master, 會將 new-branch_file.txt 的空檔案合併進來.
+
+Git 於 master 將檔案砍掉, branch 是否還能存取此檔案.
+
+    $ ls # master, master_file.txt, new-branch_file.txt
+    $ rm new-branch_file.txt # master, 刪掉此檔案
+    $ git checkout new-branch # master, 切換到 new-branch, 會出現錯誤: "pathspec 'branch' did not match any file(s) known to git."
+    $ git stash # 先把修改的部份存起來 (砍掉 new-branch_file.txt)
+    $ ls # master, 此時 new-branch_file.txt 出現了. (因為尚未 commit, stash 的動作並未做寫入)
+    $ git stash pop # master, 回復剛剛砍掉的狀態, new-branch_file.txt 就消失了.
+    $ git commit -m 'delete new-branch_file.txt in master' -a # 先砍掉.
+
+切換到 Branch, 去跟 master 做 Merge
+
+    $ git checkout new-branch
+    $ git stash pop # new-branch
+    $ git merge master # new-branch, 錯誤: "Entry 'new-branch_file.txt' not uptodate. Cannot merge.", 因為檔案有修改.
+    $ git diff master # 與 master 做 diff, 發現 /dev/null vs file, 所以要把此檔案砍掉.
+    $ rm new-branch_file.txt
+    $ git merge master # new-branch, 合併完成
+    $ ls # new-branch, 只剩 master_file.txt 這個檔案
+
+由 branch(new-branch) 環境 和 Master 分別建立 新的 branch (from-branch, from-master), 並測試未 commit 資料狀況, 新 branch 的狀態.
+
+    $ touch new-branch_file.txt # new-branch, 測試未 commit 資料狀況, 新 branch 的狀態.
+    $ git branch from-branch new-branch # new-branch, 會將 new-branch 目前所有狀態和資料都複製過去
+    $ git checkout from-branch # from-branch
+    $ git status # from-branch, 會看到 new-branch_file.txt, 且這個檔案尚未 commit.
+    $ git branch from-master master # from-branch, 依照 master 開 from-master 的 branch
+    $ git branch # from-branch
+      from-branch
+      from-master
+      master
+    * new-branch
+    $ git branch -d from-master # from-branch, 砍掉 from-master 的 branch
+    $ git checkout -b from-master master # from-branch, 建立 from-master 的 branch, 並同時切換過去.
+    $ git branch # from-master
+      from-branch
+    * from-master
+      master
+      new-branch
+
+測試由 Repository 還原檔案內容
+
+    $ echo "test" > master_file.txt
+    $ git checkout master_file.txt # 還原回空檔案 (Repository 的版本是 空檔案)
+
+git pull 出現 error: Entry 'filename' not uptodate. Cannot merge. 解法
+
+    git stash # 目前目錄有修改的資料, 先丟進暫存區
+    git pull # 合併拉下來的修改
+    git stash pop # 將修改的暫存區資料取出
+    去看 unmerge 的部份, 修改完成 commit + push 即可.
+
+Repository 測試
+建立 local 端 master
+
+    $ mkdir /tmp/a /tmp/b
+    $ cd /tmp/a
+    $ git clone http://git.example.com/project.git
+    $ cd project/
+    $ touch master-file
+    $ git add .
+    $ git commit -m 'add master-file'
+    $ git push origin master
+    $ git pull
+    $ cd /tmp/b # 由此處來建立 branch
+    $ git clone http://git.example.com/project.git
+
+建立 Repository 的 branch
+
+    $ git pull
+    $ git push origin origin:refs/heads/reps-branch
+    $ git fetch origin # 更新到最新版本(origin 是 Repository 的版本)
+    $ git branch -r
+    $ git checkout --track -b reps-branch origin/reps-branch # 抓取 reps-branch, 並將此 branch 建立於 local 的 reps-branch
+    $ git pull
+    $ git branch
+     * reps-branch
+       master
+
+測試
+A 操作, 新增一個檔案, commit 進入 reps-branch, 於 reps-branch commit
+
+    $ cd /tmp/a/project
+    $ git pull
+    $ git push origin origin:refs/heads/reps-branch
+    $ git fetch origin
+    $ git branch -r
+    $ git checkout --track -b reps-branch origin/reps-branch # 抓取 reps-branch, 並將此 branch 建立於 local 的 reps-branch
+    $ git pull
+    $ git branch
+     * reps-branch
+       master
+    $ touch reps-branch.txt
+    $ git add reps-branch.txt
+    $ git commit -m 'add reps-branch.txt'
+    $ git push
+    $ git pull
+
+B 抓取 reps-branch, 並修改資料, 再抓取 reps 的 branch
+
+    $ cd /tmp/b/project
+    $ git clone http://git.example.com/project.git
+    $ cd project
+    $ git fetch origin
+    $ git pull
+    $ git checkout --track -b reps-branch origin/reps-branch # 丟到 reps-branch 去
+    $ vim reps-branch.txt # 隨便加些內容
+    $ git add reps-branch.txt
+    $ git commit -m 'add some content'
+    $ git push
+    $ git pull
+
+A 操作, 更新, 會抓到 B commit 的資料(於 reps-branch)
+
+    $ cd /tmp/a/project
+    $ git pull # 更新 reps-branch.txt 內的資料(B commit 的)
+
