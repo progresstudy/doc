@@ -3,7 +3,10 @@ fedora 18
 yum install rabbitmq-server
 yum install librabbitmq
 
-/usr/lib/rabbitmq/bin/rabbitmq-plugins enable rabbitmq_management 
+/usr/lib/rabbitmq/bin/rabbitmq-plugins enable rabbitmq_management
+
+visit url : http://localhost:15672   or http://localhost:55672 (for old version)
+
 see images/rabbitmq-web.png
 
 management plugin : http://www.rabbitmq.com/management.html
