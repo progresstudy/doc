@@ -161,7 +161,19 @@ windows2003.img:/dev/sda                   282         16        252    6%
  
  libguestfs-test-tool
 
+ 对于no-root用户，使用guestfs会出现
+failed to initialize KVM: No such file or directory
+Back to tcg accelerator.
+qemu: could not load kernel '/var/tmp/.guestfs-1000/kernel.9392': Permission denied
+大意是说，非root用户没有访问系统kernel的权限，导致kvm不可使用。
 
+解决办法是
+sudo chmod 0644 /boot/vmlinuz*
+
+@_@ SEE:  
+https://www.redhat.com/archives/libguestfs/2012-July/msg00149.html
+https://bugs.launchpad.net/ubuntu/+source/linux/+bug/759725
+http://libguestfs.org/guestfs-faq.1.html#where-can-i-get-the-latest-binaries-for-...-
 
 3. 更有意思的virt命令
 
