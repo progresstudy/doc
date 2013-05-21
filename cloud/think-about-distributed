@@ -31,11 +31,17 @@ rpc，也就是说，分布式的程序的一个特点就是rpc通信模式
 依靠通信的rabbitmq，自然有HA方案，mysql数据库，自然也是
 有的
 
-[待确认]
 另关于数据库是否能替换成nosql类型的数据库
 重新实现nova.db.api接口
+:目前来看，sqlalchem不支持nosql, mongoldb也有自己的orm，
+ 所以目前看，如果希望使用nosql的化，确实要重新实现数据库。
+ 工作量大，但可行
 
 当大量并发请求的存在，导致大量数据查询
 mysql能否承受的了，是mysql的集群部署or替换mysql到nosql
 memched/redis能否使用，来存放一些非长变化数据,instaces/instance_info_cache/instance_flavor/...
 像虚拟机一些详细信息，主机状态update
+: 其实对虚拟机需要关注的信息，就是，状态，ip，扩展盘。
+: 可行性的实现是通过监控mysql中，需要关注表的数据变更。然后通过消息机制，告知他人。
+  具体如何来实现，是通过python的装饰器，装饰db.sqlalchem.api中的数据处理方法。
+  关注instances，fixed_ips, floating_ips的表写操作，来实现。
