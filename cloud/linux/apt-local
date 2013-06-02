@@ -1,0 +1,18 @@
+建立本地源
+
+1. apt-mirror
+
+
+2. 本地离线安装包
+2.1 下在所需软件，使用apt-get install，这样会把依赖包也下载
+2.2 默认所有deb包在/var/cache/apt/archive下面
+2.3 cp -r /var/cache/apt/archive/*.deb /root/packs
+2.4 apt-get install dpkg dpkg-dev
+2.5  dpkg-scanpackages packs /dev/null |gzip >packs/Packages.gz
+2.6 备份packs文件夹
+2.7 在新的系统里，更改/etc/apt/sources.list文件,并拷贝packs到/root
+    mv /etc/apt/sources.list /etc/apt/sources.list.save
+2.8. vim /etc/apt/sources.list
+    添加：deb file:///root packs/
+2.9 apt-get update
+完成。。
