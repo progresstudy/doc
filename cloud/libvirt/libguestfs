@@ -149,7 +149,7 @@ windows2003.img:/dev/sda                   282         16        252    6%
  
  环境ubuntu 12.04 amd-64
  
- apt-get install guestfsd libguestfs-dev guestfish libguestfs0 libguestfs-tools python-guestfs
+ apt-get install guestfsd libguestfs-dev guestfish libguestfs0 libguestfs-tools python-guestfs guestmount
  
  fix ubuntu 12.04 bug
  1. apt-get install febootstrap 
