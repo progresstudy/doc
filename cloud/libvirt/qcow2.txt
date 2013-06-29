@@ -1,0 +1,57 @@
+Cow技术实现原理：
+简单来说，在复制一个对象时并不是真的在内存中把原来对象的数据复制一份到另外一个地址，而是在新对象的内存映射表中指向同原对象相同的位置，并且把那块内存的 Copy-On-Write 位设为 1。在对这个对象执行读操作的时候，内存数据没有变动，直接执行就可以。在写的时候，才真正将原始对象复制一份到新的地址，修改新对象的内存映射表到这个新的位置，然后往这里写。KVM在Kernel SamePage Merging (KSM)中使用的也是相同的技术，扫描重复页，合并，只保留一份，当有写入操作的时候，才将内存也单独复制一份。
+Qcow2（Qemu-cow） 的磁盘格式的实现由略微不同，在qcow2的磁盘数据结构中，有一个指向backingfile的指针。
+      uint64_t backing_file_offset;
+      uint32_t backing_file_size;
+当读取文件的时候，找到指针所指向的文件的位置，读取相关的信息。写入的时候则写道当前的文件中。这也就是说，只有cow的文件才能够实现内部快照，因为它可以将backingfile指向自己，写入的时候则是写到新的快照文件中。也就可以理解，为什么快照后数据可以回滚。（注：这里只是单纯说数据快照，并没有指虚拟机的状态快照）
+
+Qcow2磁盘文件的简单操作
+首先创建一个qcow2的磁盘文件。
+
+qemu-img create -f qcow2 test.img 10M
+Formatting 'test.img', fmt=qcow2 size=10485760 encryption=off cluster_size=65536 lazy_refcounts=off
+查看下info的信息。
+qemu-img info test.img
+
+image: test.img
+file format: qcow2
+virtual size: 10M (10485760 bytes)
+disk size: 136K
+cluster_size: 65536
+可以添加参数调节qcow2内部的数据结构。（与文件系统的block有些类似，大的文件簇性能好，小的节省空间
+qemu-img create -f qcow2 -o preallocation=metadata,cluster_size=2M test.img 10M
+
+Formatting 'test.img', fmt=qcow2 size=10485760 encryption=off cluster_size=2097152 preallocation='metadata' lazy_refcounts=off 
+查看下info的信息
+
+qemu-img info test.img
+
+image: test.img
+file format: qcow2
+virtual size: 10M (10485760 bytes)
+disk size: 6.0M
+cluster_size: 2097152
+创建一个raw的文件，作为后端文件（后端文件的格式没有强制的要求）
+
+qemu-img create -f raw raw.img 1G
+Formatting 'raw.img', fmt=raw size=1073741824
+创建一个以raw为后端的qcow2的磁盘文件。
+
+qemu-img create -f qcow2 -b raw.img qcow2.img
+
+Formatting 'qcow2.img', fmt=qcow2 size=1073741824 backing_file='raw.img' encryption=off cluster_size=65536 lazy_refcounts=off 
+查看下info的信息
+
+qemu-img info qcow2.img
+
+image: qcow2.img
+file format: qcow2
+virtual size: 1.0G (1073741824 bytes)
+disk size: 196K
+cluster_size: 65536
+backing file: raw.img
+将数据合并到backing file中
+
+qemu-img commit -f qcow2 qcow2.img
+
+Image committed.
