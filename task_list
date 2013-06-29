@@ -1,8 +1,20 @@
 1. 虚拟机文件注入 :)
 2. 运维
 错误分析/解决脚本
+离线安装包
+thin_push
 部署方案：
 根据现有问题，平台部署方案。
 3. libvirt学习，验证。
 4. python webob
 5. 沉淀之前工作
+
+
+如何保证平台稳定：
+1. 运维积累
+2. 平台稳定性
+
+!! IMPORTANT !!
+Nagios Cacti研究
+Quantum 研究
+P2V研究
