@@ -170,6 +170,12 @@ qemu: could not load kernel '/var/tmp/.guestfs-1000/kernel.9392': Permission den
 解决办法是
 sudo chmod 0644 /boot/vmlinuz*
 
+出现错误：
+> febootstrap-supermin-helper: ext2: parent directory not found: /lib:
+> File not found by ext2_lookup
+解决办法：
+update-guestfs-appliance
+
 @_@ SEE:  
 https://www.redhat.com/archives/libguestfs/2012-July/msg00149.html
 https://bugs.launchpad.net/ubuntu/+source/linux/+bug/759725

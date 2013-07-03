@@ -602,4 +602,12 @@ where the division of contents in the new backing chain is completely
 under your control.
 
 
+For ubuntu server 12.04 libvirt extend snapshot error
 
+#error: internal error unable to execute QEMU command 'blockdev-snapshot-sync': An undefined error has ocurred
+
+ln -s /etc/apparmor.d/usr.sbin.libvirtd /etc/apparmor.d/disable/
+ln -s /etc/apparmor.d/usr.lib.libvirt.virt-aa-helper /etc/apparmor.d/disable/
+apparmor_parser -R /etc/apparmor.d/usr.sbin.libvirtd
+apparmor_parser -R /etc/apparmor.d/usr.lib.libvirt.virt-aa-helper
+reboot
