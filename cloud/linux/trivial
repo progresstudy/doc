@@ -10,3 +10,22 @@ visit url : http://localhost:15672   or http://localhost:55672 (for old version)
 see images/rabbitmq-web.png
 
 management plugin : http://www.rabbitmq.com/management.html
+
+
+2. mysql
+出现由于不正常关闭导致的启动失败，修改my.cnf文件。
+
+[mysqld]
+innodb_force_recovery = 4
+数据库变成只读，dump之后，删除重建。
+mysqldump -uroot -p123456 nova > nova.db
+
+卸载：
+dpkg -l | grep mysql
+sudo apt-get autoremove --purge mysql-server
+
+安装：
+sudo apt-get install mysql-server
+
+
+http://www.chriscalender.com/?p=49  InnoDB Recovery Tool 另一种解决办法
