@@ -27,5 +27,11 @@ sudo apt-get autoremove --purge mysql-server
 安装：
 sudo apt-get install mysql-server
 
-
 http://www.chriscalender.com/?p=49  InnoDB Recovery Tool 另一种解决办法
+
+3. windows 更改network配置bat命令
+netsh interface ip set address name="本地连接" source=static addr=22.48.137.166 mask=255.255.255.0
+netsh interface ip set address name="本地连接" gateway=22.48.137.254 gwmetric=0
+netsh interface ip set dns name="本地连接" source=static addr=22.48.1.1 register=primary
+netsh interface ip add dns name="本地连接" addr=22.48.128.88
+netsh interface ip set wins name="本地连接" source=static addr=none
