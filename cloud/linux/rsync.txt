@@ -1,0 +1,359 @@
+一、rsync 服务器
+rsync，remote synchronize思意就知道它是一款实现远程同步功能的软件，它在同步文件的同时，可以保持原来文件的权限、时间、软硬链接等附加信息。 rsync是用 “rsync 算法”提供了一个客户机和远程文件服务器的文件同步的快速方法，而且可以通过ssh方式来传输文件，这样其保密性也非常好，另外它还是免费的软件。
+rsync 包括如下的一些特性：
+　　能更新整个目录和树和文件系统；
+　　有选择性的保持符号链接、硬链接、文件属于、权限、设备以及时间等；
+ 　对于安装来说，无任何特殊权限要求；
+　　对于多个文件来说，内部流水线减少文件等待的延时；
+　　能用rsh、ssh 或直接端口作为传输入端口；
+　　支持匿名rsync 同步文件，是理想的镜像工具；
+rsync 服务器架设比较简单，可能我们安装好rsync后，并没有发现配置文件，以及rsync服务器启动程序，因为每个管理员可能对rsync 用途不一样，所以一般的发行版只是安装好软件就完事了，让管理员来根据自己的用途和方向来自己架设rsync服务器；因为这个rsync应用比较广，能在同一台主机进行备份工作，还能在不同主机之间进行工作。在不同主机之间的进行备份，是必须架设rsync 服务器的。
+二、 rsync服务器安装
+rysnc的官方网站：http://rsync.samba.org可以从上面得到最新的版本。目前最新版是3.0.9。
+[root@server ~]# wget http://rsync.samba.org/ftp/rsync/src/rsync-3.0.9.tar.gz
+[root@server ~]#  tar xvf  rsync-3.0.9.tar.gz
+[root@server ~]# cd rsync-3.0.9
+[root@server rsync-3.0.9]# ./configure --prefix=/usr
+[root@server rsync-3.0.9]# make
+[root@server rsync-3.0.9]# make install  注：在用源码包编译安装之前，您得安装gcc等编译开具才行
+三、 rsync服务器的配置文件rsyncd.conf
+rsync的主要有以下三个配置文件:
+rsyncd.conf(主配置文件)
+rsyncd.secrets(密码文件)
+rsyncd.motd(rysnc服务器信息)
+服务器配置文件(/etc/rsyncd/rsyncd.conf)，该文件默认不存在，请创建：
+[root@server etc]# mkdir rsyncd  注：在/etc目录下创建一个rsyncd的目录，我们用来存放rsyncd.conf 、rsyncd.secrets、rsyncd.mond文件
+[root@server rsyncd]# touch rsyncd.conf  注：创建rsyncd.conf ，这是rsync服务器的配置文件
+[root@server rsyncd]# touch rsyncd.secrets  注：创建rsyncd.secrets ，这是用户密码文件
+[root@server rsyncd]# chmod 600 rsyncd.secrets  注：为了密码的安全性，我们把权限设为600
+[root@server rsyncd]# ls -lh rsyncd.secrets
+-rw------- 1 root root 12 9月  14 11:56 rsyncd.secrets
+[root@server rsyncd]# touch rsyncd.motd
+[root@server rsyncd]# ll
+总用量 12
+-rw-r--r-- 1 root root 643 9月  14 11:55 rsyncd.conf
+-rw-r--r-- 1 root root 172 9月  14 11:58 rsyncd.motd
+-rw------- 1 root root  12 9月  14 11:56 rsyncd.secrets
+配置编辑： rsyncd.conf 、rsyncd.secrets 、rsyncd.motd 文件；
+1、配置rsyncd.conf文件
+rsyncd.conf 是rsync服务器主要配置文件，我们来个简单的示例：
+备份服务器上的/data/share目录下所有文件，手动添加内容如下：
+[root@server ~]# vim /etc/rsyncd/rsyncd.conf
+# Distributed under the terms of the GNU General Public License v2
+# Minimal configuration file for rsync daemon
+# See rsync(1) and rsyncd.conf(5) man pages for help
+# This line is required by the /etc/init.d/rsyncd script
+pid file = /var/run/rsyncd.pid 注：告诉进程写到 /var/run/rsyncd.pid 文件中
+port = 873     注：指定运行端口，默认是873，您可以自己指定
+address = 10.1.4.44       注：指定服务器IP地址
+#uid = nobody  注：服务器端传输文件时，要发哪个用户和用户组来执行，默认是nobody
+#gid = nobody  注：服务器端传输文件时，要发哪个用户和用户组来执行，默认是nobody
+uid = root
+gid = root
+use chroot = yes
+read only = yes
+#limit access to private LANs
+hosts allow=10.1.4.0/255.255.255.0
+hosts deny=*
+max connections = 5   注：客户端最多连接数
+motd file = /etc/rsyncd/rsyncd.motd
+#This will give you a separate log file
+log file = /var/log/rsync.log
+#This will log every file transferred - up to 85,000+ per user, per sync
+#transfer logging = yes
+log format = %t %a %m %f %b
+syslog facility = local3
+timeout = 300
+[samba_data]  注：模块
+path =  /data/share   注：指定文件目录所在路径
+list=no   注：list 意思是把rsync 服务器上提供同步数据的目录在服务器上模块是否显示列出来。默认是yes 。如果你不想列出来，就no ；如果是no是比较安全的，至少别人不知道你的服务器上提供了哪些目录。你自己知道就行了
+ignore errors   注：忽略IO错误，详细的请查文档
+auth users = root    注：认证用户是root  ，是必须在服务器上存在的用户
+secrets file = /etc/rsyncd/rsyncd.secrets  注：密码存在rsyncd.secrets文件里
+注： 关于 auth users 是必须在服务器上存在的真实的系统用户，如果你想用多个用户，那就以,号隔开；比如 auth users = root , user1
+2、配置rsyncd.secrets文件
+密码文件： rsyncd.secrets的内容格式
+[root@server ~]# vim /etc/rsyncd/rsyncd.secrets
+root:111111
+user:111111
+用户名:密码     注：root:111111
+而我们在例子中rsyncd.secrets的内容如下类似的；在文档中说，有些系统不支持长密码，自己尝试着设置一下吧。另外 rsyncd.secrets文件权限对其它用户组是不可读的。如果你设置错了，可能rsync不工作。
+注意：
+1、将rsyncd.secrets这个密码文件的文件属性设为root拥有, 且权限要设为600, 否则无法备份成功! 出于安全目的，文件的属性必需是只有属主可读。
+#chown root.root rsyncd.secrets 　#修改属主
+#chmod 600 rsyncd.secrets         #修改权限
+2、这里的密码值得注意，为了安全，你不能把系统用户的密码写在这里。比如你的系统用户 root 密码是 abcdefg ，为了安全，你可以让rsync 中的root 为 111111 。这和samba的用户认证的密码原理是差不多的；
+3、配置rsyncd.motd 文件
+它是定义rysnc 服务器信息的，也就是用户登录信息。比如让用户知道这个服务器是谁提供的等；类似ftp服务器登录时，我们所看到的提示信息……。 当然这在全局定义变量时，并不是必须的，你可以用#号注掉，或删除；我在这里写了一个 rsyncd.motd的内容为：
+[root@server ~]# vim /etc/rsyncd/rsyncd.motd
+　　++++++++++++++++++++++++++++++++++++++++++++++
+　　Welcome to use the mike.org.cn rsync services!
+                  2002------2012
+　　++++++++++++++++++++++++++++++++++++++++++++++
+四、架设rsync服务器的说明
+1、全局定义
+在rsync 服务器中，全局定义有几个比较关健的，根据我们前面所给的配置文件 rsyncd.conf 文件；
+pid file = /var/run/rsyncd.pid   注：告诉进程写到 /var/run/rsyncd.pid 文件中
+port = 873  注：指定运行端口，默认是873，您可以自己指定
+address = 10.1.4.44  注：指定服务器IP地址
+uid = nobody
+gid = nobdoy
+注：服务器端传输文件时，要发哪个用户和用户组来执行，默认是nobody。 如果用nobody 用户和用户组，可能遇到权限问题，有些文件从服务器上拉不下来。所以我就偷懒，为了方便，用了root 。不过您可以在定义要同步的目录时定义的模块中指定用户来解决权限的问题。
+use chroot = yes 注：用chroot，在传输文件之前，服务器守护程序在将chroot 到文件系统中的目录中，这样做的好处是可能保护系统被安装漏洞侵袭的可能。缺点是需要超级用户权限。另外对符号链接文件，将会排除在外。也就是说，你在rsync服务器上，如果有符号链接，你在备份服务器上运行客户端的同步数据时，只会把符号链接名同步下来，并不会同步符号链接的内容；这个需要自己来尝试
+read only = yes 注：read only 是只读选择，也就是说，不让客户端上传文件到服务器上。还有一个 write only选项，自己尝试是做什么用的吧
+#limit access to private LANs
+hosts allow=192.168.1.0/255.255.255.0 10.0.1.0/255.255.255.0
+注：在您可以指定单个IP，也可以指定整个网段，能提高安全性。格式是ip 与ip 之间、ip和网段之间、网段和网段之间要用空格隔开
+max connections = 5 注：客户端最多连接数
+motd file = /etc/rsyncd/rsyncd.motd 注：motd file 是定义服务器信息的，要自己写 rsyncd.motd 文件内容。当用户登录时会看到这个信息。
+log file = /var/log/rsync.log 注：rsync 服务器的日志
+transfer logging = yes  注：这是传输文件的日志
+log format = %t %a %m %f %b
+syslog facility = local3
+timeout = 300
+2 模块定义
+模块定义什么呢？主要是定义服务器哪个目录要被同步。每个模块都要以[name]形式。这个名字就是在rsync 客户端看到的名字，其实有点像Samba服务器提供的共享名。而服务器真正同步的数据是通过 path 来指定的。我们可以根据自己的需要，来指定多个模块。每个模块要指定认证用户，密码文件、但排除并不是必须的；
+我们来个简单的示例：
+比如我们要备份服务器上的 /data/share 和/opt ，在/data/share中，我想把beinan和samba目录排除在外；
+[samba]   注：模块，它为我们提供了一个链接的名字
+path = /data/share    注：指定文件目录所在路径
+auth users = root   注：认证用户是root  ，是必须在 服务器上存在的用户
+list=yes   注：list 意思是把rsync 服务器上提供同步数据的目录在服务器上模块是否显示列出来。默认是yes 。如果你不想列出来，就no ；如果是no是比较安全的，至少别人不知道你的服务器上提供了哪些目录。你自己知道就行了
+ignore errors  注：忽略IO错误，详细的请查文档
+secrets file = /etc/rsyncd/rsyncd.secrets   注：密码存在rsyncd.secrets文件
+comment =root  home  data  注：注释可以自己定义，写什么都行，写点相关的内容就行
+exclude = beinan/ samba/ 注：exclude 是排除的意思，也就是说，要把/home目录下的beinan和samba 排除在外； beinan/和samba/目录之间有空格分开
+[beinan]    注：模块，它为我们提供了一个链接的名字
+path = /opt  注：指定文件目录所在路径
+list=no
+comment = data
+auth users = user1  注：是必段在服务器上存在的用户
+secrets file = /etc/rsyncd/rsyncd.secrets
+ignore errors
+五、启动rsync 服务器及防火墙的设置
+1、启动rsync服务器
+启动rsync 服务器相当简单，–daemon 是让rsync 以服务器模式运行；
+[root@server ~]#/usr/bin/rsync --daemon --config=/etc/rsyncd/rsyncd.conf
+注： 如果你找不到rsync 命令，你应该知道rsync 是安装在哪了。比如rsync 可执行命令可能安装在了 /usr/local/bin目录；也就是如下的命令；
+[root@server ~]#/usr/local/bin/rsync --daemon --config=/etc/rsyncd/rsyncd.conf
+当然您也可以写一个脚本来开机自动启动rysnc 服务器，你自己查查文档试试，这个简单。因为我用slackware 也有一个类似的脚本。我感觉不如直接手工运行方面，或者把这个命令写入rc.local文件中，这样也一样能自动运行；
+[root@server ~]# netstat -anp |grep :873
+tcp    0    0 10.1.4.44:873       0.0.0.0:*           LISTEN      5696/rsync    
+2 、rsync服务器和防火墙
+Linux 防火墙是用iptables，所以我们至少在服务器端要让你所定义的rsync 服务器端口通过，客户端上也应该让通过。
+[root@server ~]#iptables -A INPUT -p tcp -m state --state NEW  -m tcp --dport 873 -j ACCEPT
+[root@server ~]#iptables -L  查看一下防火墙是不是打开了 873端口；
+六、通过rsync客户端来同步数据
+语法详解
+　　在配置完rsync服务器后，就可以从客户端发出rsync命令来实现各种同步的操作。rsync有很多功能选项，下面就对介绍一下常用的选项：
+　　rsync的命令格式可以为：　
+　　1. rsync [OPTION]... SRC [SRC]... [USER@]HOST:DEST
+　　2. rsync [OPTION]... [USER@]HOST:SRC DEST
+　　3. rsync [OPTION]... SRC [SRC]... DEST
+　　4. rsync [OPTION]... [USER@]HOST::SRC [DEST]
+　　5. rsync [OPTION]... SRC [SRC]... [USER@]HOST::DEST
+　　6. rsync [OPTION]... rsync://[USER@]HOST[:PORT]/SRC [DEST]
+　　rsync有六种不同的工作模式：
+　　1. 拷贝本地文件；当SRC和DES路径信息都不包含有单个冒号":"分隔符时就启动这种工作模式。
+　　2.使用一个远程shell程序（如rsh、ssh）来实现将本地机器的内容拷贝到远程机器。当DST路径地址包含单个冒号":"分隔符时启动该模式。
+　　3.使用一个远程shell程序（如rsh、ssh）来实现将远程机器的内容拷贝到本地机器。当SRC地址路径包含单个冒号":"分隔符时启动该模式。
+　　4. 从远程rsync服务器中拷贝文件到本地机。当SRC路径信息包含"::"分隔符时启动该模式。
+　　5. 从本地机器拷贝文件到远程rsync服务器中。当DST路径信息包含"::"分隔符时启动该模式。
+　　6. 列远程机的文件列表。这类似于rsync传输，不过只要在命令中省略掉本地机信息即可。
+　　-a 以archive模式操作、复制目录、符号连接 相当于-rlptgoD
+　　rsync中的参数
+　　-r 是递归
+   -l 是链接文件，意思是拷贝链接文件；
+   -p 表示保持文件原有权限；
+   -t 保持文件原有时间；
+   -g 保持文件原有用户组；
+   -o 保持文件原有属主；
+   -D 相当于块设备文件；
+　　-z 传输时压缩；
+　　-P 传输进度；
+　　-v 传输时的进度等信息，和-P有点关系，自己试试。可以看文档；
+　　-e ssh的参数建立起加密的连接。
+　　-u只进行更新，防止本地新文件被重写，注意两者机器的时钟的同时
+　　--progress是指显示出详细的进度情况
+　　--delete是指如果服务器端删除了这一文件，那么客户端也相应把文件删除，保持真正的一致
+　　--password-file=/password/path/file来指定密码文件，这样就可以在脚本中使用而无需交互式地输入验证密码了，这里需要注意的是这份密码文件权限属性要设得只有属主可读。
+1 、rsync 服务器上的所提供的同步内容
+在rsync服务器上查看提供了哪些可用的数据源。
+[root@server ~]# rsync --list-only root@10.1.4.44::samba_data
+++++++++++++++++++++++++++++++++++++++++++++++
+Welcome to use the mike.org.cn rsync services!
+               2002------2012
+++++++++++++++++++++++++++++++++++++++++++++++
+Password:
+drwxr-xr-x        4096 2012/09/14 12:04:57 .
+drwxrwxrwx        4096 2012/09/14 12:04:57 caiwu
+drwxrwxrwx        4096 2012/09/14 12:24:54 jishu
+drwxrwxrwx        4096 2012/09/14 12:22:11 public
+drwxrwxrwx        4096 2012/09/14 12:04:57 yanfa
+注： 前面是rsync 所提供的数据源，也就是我们在rsyncd.conf 中所写的[samba_data]模块。而“linuxsir home data”是由[samba_data]模块中的 comment = root home 提供的；为什么[samba_data] 数据源列出来呢？因为我们在[samba_data]中已经把list=yes。
+2、rsync客户端安装
+rysnc的官方网站：http://rsync.samba.org可以从上面得到最新的版本。目前最新版是3.0.9。
+[root@server ~]# wget http://rsync.samba.org/ftp/rsync/src/rsync-3.0.9.tar.gz
+[root@client ~]#  tar xvf  rsync-3.0.9.tar.gz
+[root@client ~]# cd rsync-3.0.9
+[root@client rsync-3.0.9]# ./configure --prefix=/usr
+[root@client rsync-3.0.9]# make
+[root@client rsync-3.0.9]# make install  注：在用源码包编译安装之前，您得安装gcc等编译开具才行
+在rsync客户端上查看提供了哪些可用的数据源：
+[root@client ~]# rsync -avzP root@10.1.4.44::samba_data
+++++++++++++++++++++++++++++++++++++++++++++++
+Welcome to use the mike.org.cn rsync services!
+               2002------2012
+++++++++++++++++++++++++++++++++++++++++++++++
+Password:
+receiving incremental file list
+drwxr-xr-x        4096 2012/09/14 12:04:57 .
+drwxrwxrwx        4096 2012/09/14 12:04:57 caiwu
+drwxrwxrwx        4096 2012/09/17 11:57:00 jishu
+drwxrwxr-x        4096 2012/09/17 11:31:59 jishu/技术IOS
+drwxrwxr-x        4096 2012/09/17 11:31:25 jishu/技术之星
+drwxrwxr-x        4096 2012/09/17 16:05:04 jishu/技术备份
+drwxrwxr-x        4096 2012/09/17 11:31:50 jishu/技术文档
+drwxrwxr-x        4096 2012/09/17 11:31:40 jishu/技术资料完整
+drwxrwxr-x        4096 2012/09/17 11:32:07 jishu/技术软件包
+drwxrwxrwx        4096 2012/09/17 16:06:34 public
+drwxrwxrwx        4096 2012/09/14 12:04:57 yanfa
+sent 70 bytes  received 489 bytes  74.53 bytes/sec
+total size is 0  speedup is 0.00
+后面的root@ip中，root是指定密码文件中的用户名，之后的:: samba_data这是[samba_data]模块名
+3 、rsync 客户端手动同步数据
+[root@client ~]# rsync -avzP root@10.1.4.44::samba_data /data
+Password: 这里要输入root的密码，是服务器端提供的，在前面的例子中，我们用的是 111111，输入的密码并不显示出来；输好后就回车；
+注： 这个命令的意思就是说，用root 用户登录到服务器上，把[samba_data] 数据，同步到本地目录/data上。当然本地的目录是可以你自己定义的，比如 /share也是可以的；当你在客户端上，当前操作的目录下没有/data这个目录时，系统会自动为你创建一个；当存在/data这个目录中，你要注意它的写权限。
+说明：
+-a 参数，相当于-rlptgoD，-r 是递归 -l 是链接文件，意思是拷贝链接文件；-p 表示保持文件原有权限；-t 保持文件原有时间；-g 保持文件原有用户组；-o 保持文件原有属主；-D 相当于块设备文件；
+-z 传输时压缩；
+-P 传输进度；
+-v 传输时的进度等信息，和-P有点关系，自己试试。可以看文档；
+[root@client ~]# rsync -avzP --delete root@10.1.4.44::samba_data /data
+--delete 选项：表示客户端上的数据要与服务器端完全一致，如果 [samba_data]目录中有服务器上不存在的文件，则删除。最终目的是让/data目录上的数据完全与服务器上保持一致；用的时候要小心点，最好不要把已经有重要数所据的目录，当做本地更新目录，否则会把你的数据全部删除；
+[root@client ~]# rsync -avzp --delete --password-file=rsync.password root@10.1.4.44::samba_data /data  
+--password-file=rsync.password选项：这是当我们以linuxsir用户登录rsync服务器同步数据时，密码将读取 rsync.password 这个文件。这个文件内容只是linuxsir用户的密码。我们要如下做；
+[root@client ~]# touch rsync.password
+[root@client ~]# chmod 600 rsync.passwod
+[root@client ~]# echo "111111"> rsync.password
+[root@client ~]# rsync -avzp --delete --password-file=rsync.password root@10.1.4.44::samba_data /data
+注： 这样就不需要密码了；其实这是比较重要的，因为服务器通过crond 计划任务还是有必要的；
+4、rsync 客户端自动与服务器同步数据
+服务器是重量级应用，所以数据的网络备份还是极为重要的。我们可以在生产型服务器上配置好rsync 服务器。我们可以把一台装有rysnc机器当做是备份服务器。让这台备份服务器，每天在早上2点开始同步服务器上的数据；并且每个备份都是完整备份。有时硬盘坏掉，或者服务器数据被删除，完整备份还是相当重要的。这种备份相当于每天为服务器的数据做一个镜像，当生产型服务器发生事故时，我们可以轻松恢复数据，能把数据损失降到最低.
+第一步：创建同步脚本和密码文件
+注： 我们在/etc/cron.daily.rsync中创建了一个文件名为：root.sh ，并且是权限是 755。
+[root@client ~]# mkdir /etc/cron.daily.rsync
+[root@client ~]# cd /etc/cron.daily.rsync
+[root@client cron.daily.rsync]# touch root.sh
+[root@client cron.daily.rsync]# chmod 755 root.sh
+编辑root.sh，内容是如下的：
+[root@client cron.daily.rsync]#vim root.sh
+#!/bin/sh
+#10.1.4.44 samba_data backup
+/usr/bin/rsync -avzP --delete --password-file=/etc/rsyncd/rsyncroot.password root@10.1.4.44::samba_data /data/$(date +'%m-%d-%y')
+:wq  
+执行一下配置的脚本语句：
+[root@client cron.daily.rsync]# sh root.sh  
+创建密码文件，root用户用的是 rsyncroot.password，权限是600；
+[root@client ~]# mkdir /etc/rsyncd/
+[root@client ~]# cd /etc/rsyncd/
+[root@client rsyncd]# touch rsyncroot.password
+[root@client rsyncd]# chmod 600 rsyncroot.password
+[root@client rsyncd]# ll
+total 4
+-rw------- 1 root root 7 Sep 14 17:30 rsyncroot.password
+接着我们修改 rsyncroot.password的内容；
+[root@client rsyncd]# echo "111111" > rsyncroot.password
+然后我们再/目录下创建/data目录，意思是服务器端的/data/share数据同步到备份客户端上的/data下。并按年月日归档创建目录；每天备份都存档；
+[root@client ~]# cd /
+[root@client /]# mkdir /data
+第二步：修改crond服务器的配置文件、加入到计划任务
+[root@client ~]# crontab  -e
+加入下面的内容：
+# Run daily cron jobs at 02:30 every day  backup samba data:
+30 02 * * * /usr/bin/run-parts  /etc/cron.daily.rsync  1>  /dev/null
+计划任务说明：
+# 基本格式 :
+# .----------------第1列表示分钟1～59 每分钟用*或者 */1表示
+# |   .------------- 第2列表示小时1～23（0表示0点
+# |   |   .---------- 第3列表示日期1～31
+# |   |   |   .------- 第4列表示月份1～12
+# |   |   |   |   .---- 第5列标识号星期0～6（0表示星期天）OR sun,mon,tue,wed,thu,fri,sat
+# |   |   |   |   |
+# *   *   *   *   *
+第一行是注释，是说明内容，这样能自己记住。
+第二行表示在每天早上02点30分的时候，运行/etc/cron.daily.rsync 下的可执行脚本任务；
+第三步：重启crond服务器；
+[root@client ~]# service crond restart
+Stopping crond:                                            [  OK  ]
+Starting crond:                                            [  OK  ]
+[root@client ~]# killall crond    注：杀死crond 服务器的进程；
+[root@client ~]# ps aux |grep crond  注：查看一下是否被杀死；
+[root@client ~]# /usr/sbin/crond    注：启动 crond 服务器；
+[root@client ~]# ps aux  |grep crond  注：查看一下是否启动了？
+root      3872  0.0  0.1   5916  1192 ?        Ss   12:02   0:00 crond
+root      3951  0.0  0.1   5912  1184 ?        Ss   14:06   0:00 /usr/sbin/crond
+root      3953  0.0  0.0   4336   760 pts/0    S+   14:06   0:00 grep crond
+查看数据备份：
+[root@client ~]# ll /data
+total 24
+
+drwxr-xr-x 6 root root 4096 Sep 14 12:04 09-17-12
+drwxr-xr-x 6 root root 4096 Sep 14 12:04 09-18-12
+
+
+
+
+
+
+
+
+
+
+
+
+
+配置一：
+ignore errors
+说明：这个选项最好加上，否则再很多crontab的时候往往发生错误你也未可知，因为你不可能天天去看每时每刻去看log，不加上这个出现错误的几率相对会很高，因为任何大点的项目和系统，磁盘IO都是一个瓶颈
+ 
+Rsync error： 
+错误一： 
+@ERROR: auth failed on module xxxxx 
+rsync: connection unexpectedly closed (90 bytes read so far) 
+rsync error: error in rsync protocol data stream (code 12) at io.c(150) 
+说明：这是因为密码设置错了，无法登入成功，检查一下rsync.pwd，看客服是否匹配。还有服务器端没启动rsync 服务也会出现这种情况。
+
+错误二： 
+password file must not be other-accessible 
+continuing without password file 
+Password: 
+说明：这是因为rsyncd.pwd rsyncd.sec的权限不对，应该设置为600。如：chmod 600 rsyncd.pwd
+
+错误三： 
+@ERROR: chroot failed 
+rsync: connection unexpectedly closed (75 bytes read so far) 
+rsync error: error in rsync protocol data stream (code 12) at io.c(150) 
+说明：这是因为你在 rsync.conf 中设置的 path 路径不存在，要新建目录才能开启同步
+
+错误四： 
+rsync: failed to connect to 218.107.243.2: No route to host (113) 
+rsync error: error in socket IO (code 10) at clientserver.c(104) [receiver=2.6.9] 
+说明：防火墙问题导致，这个最好先彻底关闭防火墙，排错的基本法就是这样，无论是S还是C，还有ignore errors选项问题也会导致
+ 
+错误五：
+@ERROR: access denied to www from unknown (192.168.1.123)
+rsync: connection unexpectedly closed (0 bytes received so far) [receiver]
+rsync error: error in rsync protocol data stream (code 12) at io.c(359)
+说明：此问题很明显，是配置选项host allow的问题，初学者喜欢一个允许段做成一个配置，然后模块又是同一个，致使导致
+
+错误六：
+rsync error: received SIGINT, SIGTERM, or SIGHUP (code 20) at rsync.c(244) [generator=2.6.9]
+rsync error: received SIGUSR1 (code 19) at main.c(1182) [receiver=2.6.9]
+说明：导致此问题多半是服务端服务没有被正常启动，到服务器上去查查服务是否有启动，然后查看下 /var/run/rsync.pid 文件是否存在，最干脆的方法是杀死已经启动了服务，然后再次启动服务或者让脚本加入系统启动服务级别然后shutdown -r now服务器
+
+错误七：
+rsync: read error: Connection reset by peer (104)
+rsync error: error in rsync protocol data stream (code 12) at io.c(604) [sender=2.6.9]
+说明：原数据目录里没有数据存在
