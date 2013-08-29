@@ -1,0 +1,92 @@
+1. 准备
+centos 6.4
+192.168.1.150 master.hadoop
+192.168.1.151 slaver.hadoop
+
+software
+jdk-7.0
+hadoop-src.tgz
+
+2. 安装
+    2.1 hosts
+        echo "92.168.1.150 master.hadoop" >> /etc/hosts
+	echo "192.168.1.151 slaver.hadoop" >> /etc/hosts
+    2.2 ssh (master & slaver)
+        ssh-keygen
+	cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+	scp ~/.ssh/id_rsa.pub slaver.hadoop:/root
+	scp ~/.ssh/id_rsa.pub master.hadoop:/root
+	cat ~/id_rsa.pub >> ~/.ssh/authorized_keys
+    2.3 jdk
+        chmod +x jdk-7.0.bin
+	./jdk-7.0.bin
+	#change env /etc/profile
+	export JAVA_HOME=/usr/java/jdk1.6.0_31/
+	export JRE_HOME=/usr/java/jdk1.6.0_31/jre
+	export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib
+	export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin
+    2.4 hadoop
+        tar xzvf hadoop-src.tgz
+	#change env for hadoop
+	export HADOOP_HOME=/root/hadoop
+	export PATH=$PATH:$HADOOP_HOME/bin
+    2.5 hadoop configure (/root/hadoop/conf)
+    2.5.1 
+    [root@master conf]# less core-site.xml
+    <?xml version="1.0"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+    <!-- Put site-specific property overrides in this file. -->
+
+    <configuration>
+    <property>
+        <name>fs.default.name</name>
+        <value>hdfs://master.hadoop:54310</value>
+        <description>The name and URI of the default FS.</description>
+      </property>
+    </configuration>
+    2.5.2
+    [root@master conf]# less hdfs-site.xml
+    <?xml version="1.0"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+    <!-- Put site-specific property overrides in this file. -->
+
+    <configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+        <description>Default block replication</description>
+      </property>
+
+    </configuration>
+    
+    2.5.3
+    [root@master conf]# less mapred-site.xml
+    <?xml version="1.0"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+    <!-- Put site-specific property overrides in this file. -->
+
+    <configuration>
+     <property>
+        <name>mapred.job.tracker</name>
+        <value>master.hadoop:54311</value>
+        <description>Map Reduce jobtracker</description>
+      </property>
+    </configuration>
+    
+    2.5.4  master.hadoop ONLY
+    [root@master conf]# less masters
+    master.hadoop
+    2.5.5 master.hadoop ONLY
+    [root@master conf]# less slaves
+    slaver.hadoop
+    
+    2.6 关闭防火墙，开启服务
+    service iptables stop
+    start-all.sh
+	
+	
+	
+	

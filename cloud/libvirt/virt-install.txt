@@ -1,0 +1,11 @@
+virt-install \
+-v -d \
+-n i-02 \
+-r 1024 \
+--vcpus 1 \
+--boot cdrom,fd,hd,network,menu=on \
+--disk path=/var/lib/libvirt/images/win7.img,bus=ide,cache=none,format=qcow2 \
+--disk path=/var/lib/libvirt/images/virtio-win-0.1-59.iso,bus=ide,cache=none,format=raw \
+--cdrom=/var/lib/libvirt/images/cn_windows_7_ultimate_x64_dvd_x15-66043.iso \
+--network bridge=virbr0 \
+--graphics vnc,listen=0.0.0.0 \

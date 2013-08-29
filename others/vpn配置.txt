@@ -1,0 +1,64 @@
+create vpn server
+
+1. 一个vps服务器，http://photonvps.com  128M RAM, 20G disk, 600G Traffic = $5.95
+2. 搭建vpn server ，vps centos 6.2
+3. rpm -Uvh http://poptop.sourceforge.net/yum/stable/rhel6/pptp-release-current.noarch.rpm
+4. yum install -y ppp pptpd iptables
+5. 打开iptalbes功能
+＃vi /etc/sysctl.conf
+net.ipv4.ip_forward = 1
+＃/sbin/sysctl -p
+5. 配置pptp
+#设置pptpd
+vi /etc/ppp/options.pptpd
+name vps
+refuse-pap
+refuse-chap
+refuse-mschap
+require-mschap-v2
+require-mppe-128
+proxyarp
+nobsdcomp
+novj
+novjccomp
+nologfd
+ms-dns 4.2.2.1
+ms-dns 4.2.2.2
+ 
+#设置pptpd
+vi /etc/pptpd.conf
+option /etc/ppp/options.pptpd
+debug
+logwtmp
+localip 10.10.10.1
+remoteip 10.10.10.2-254
+
+5. 添加iptalbe 规则：
+iptables -t nat -F
+iptables -t nat -A POSTROUTING -o eth0 -s 10.10.10.0/24 -j MASQUERADE
+iptables -t filter -A INPUT -p tcp -m tcp --dport 1723 -j ACCEPT
+iptables -t filter -A INPUT -p tcp -m tcp --dport 47 -j ACCEPT
+iptables -t filter -A INPUT -p gre -j ACCEPT
+iptables -t nat -L -n
+service iptables save
+
+6. 启动pptp
+chkconfig --level 345 pptpd on
+/etc/init.d/pptpd start
+
+7. 添加帐户
+vpnuser add username passwd
+
+8. 本地vpn连接，使用pptp vpn 类型
+通过设置route，使不同ip通过vpn or 本地网络访问，减少vpn流量
+注意一定要有两个default route
+FOR MAC OS:
+netstat -nr | less
+default            10.10.10.1         UGSc           79        9    ppp0
+default            192.168.1.1        UGScI           4        0     en0
+
+可以通过 route add -net 115.47.47.0/24 192.168.1.1添加
+注：192.168.1.1使本地网关， 10.10.10.1为vpn网关
+使用route -n flush 清除设置
+
+mtu 问题，通过ping -s 1400 ip 保证mtu正常，否者无法上网，体现可以ping通但无法上网，通过tcpdump看得见包请求。scp没有速度。

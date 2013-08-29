@@ -1,0 +1,562 @@
+1.	服务器只开放必要的端口，其他端口需要用技术手段加以屏蔽
+   1.1 打开某端口
+   iptables -t filter -I INPUT -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+   1.2 关闭除22(SSH)的所有端口 (注:redhat&centos默认为此设置)
+	iptables -t filter -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+	iptables -t filter -A INPUT -p icmp -j ACCEPT
+	iptables -t filter -A INPUT -i lo -j ACCEPT
+	iptables -t filter -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+	iptables -t filter -A INPUT -j REJECT --reject-with icmp-host-prohibited
+	iptables -t filter -A FORWARD -j REJECT --reject-with icmp-host-prohibited
+
+2. 服务器要对并口、串口、 usb接口物理断开和逻辑关闭  
+
+3.  
+   
+4. 密码复杂度
+/etc/pam.d/system-auth
+下面是cracklib模块的一些参数：
+           debug：将debug信息写入syslog
+           type=XXX：提示输入密码的文本内容。默认是"New UNIX password: " and "Retype UNIX password: "，可自定
+           retry=N：用户最多可以几次输入密码后报错。默认是1次。           difok=N：新密码有几个字符不能和旧密码相同，默认是5个。另外如果新密码有1/2的字符于旧不同，也会被接受。
+           diginore=N：默认当新密码有23个字符时，difok选项会被忽略。
+           minlen=N：最小密码长度。           dcredit=N：当N>=0时，N代表新密码最多可以有多少个阿拉伯数字。当N<0时，N代表新密码最少要有多少个阿拉伯数字。
+            ucredit=N：和dcredit差不多，但是这里说的是大写字母。
+            lcredit=N：和dcredit差不多，但是这里说的是小写字母。
+            ocredit=N：和dcredit差不多，但是这里说的是特殊字符。
+            use_authtok：在某个与密码相关的验证模块后使用此选项，例如pam_unix.so验证模块
+            pam_cracklib 模块式PAM配置接口的基本模块，在Debian系统中配置文件是 /etc/pam.d/common-password 但是在Redhat系统中配置文件是 /etc/pam.d/system-auth 他的配置看起来像以下这样：
+            password required pam_cracklib.so retry=3 minlen=6 difok=3
+            password required pam_unix.so md5 use_authtok
+            第一行是 pam_cracklib模块和设置的几个模块参数
+            第二行是 pam_unix模块，MD5表示采用MD5加密            pam_cracklib可以记录用户使用的历史密码，并且不允许用户重复使用旧的密码，实际上存储用户旧密码的是通过pam_unix模块实现的。          第一步是建立一个空文件用来存储旧密码/etc/security/opasswd，如果你没有建立文件却使用了历史密码记录功能的话，所有的密码更新都会失败，因为pam_unix模块会报错。
+          opasswd就像/etc/shadow文件，因为他记录用户密码的哈希
+          touch /etc/security/opasswd
+          chown root:root /etc/security/opasswd
+          chmod 600 /etc/security/opasswd           一旦建立了opasswd文件，就可以在pam_unix模块后面加上参数remember=N来开始记录旧密码，remember参数记录你想记录多少旧密码，他的最大值是400，如果你设置的值超过400会当做400来对待，例如：
+          password required pam_cracklib.so retry=3 minlen=12 difok=4
+          password required pam_unix.so md5 remember=12 use_authtok
+          opasswd文件内容格式如下：
+          hal:1000:<n>:<hash1>,<hash2>,...,<hashn>        以‘:’分割，第一列是用户名，第二列是用户ID，第三列是目前记录了该用户多少个旧密码，hashN是每次密码的MD5值，opasswd在某些系统安装PAM模块时会自动建立。
+         密码字典检查
+                pam_cracklib 也可以检查用户设置的密码是不是违反系统内部的密码字典，在Debian系统中pam_cracklib的      密码字典在/var/cache/cracklib目录下，而且每天晚上update-cracklib脚本会自动的rebuild密码字典。
+           /etc/login.defs 文件设置密码过期时间等一系列参数，注意login.defs中设置的参数只有是用系统的useradd程序新建的一个用户时才会有login.defs中设置的属性，如果是用其他机器新建的用户，则没有以上属性，不过可以试用chage命令手动添加相关属性。
+         chage参数如下：
+         -m 密码可更改的最小天数。 为零时代表任何时候都可以更改密码。
+         -M 密码保持有效的最大天数。
+         -W 用户密码到期前，提前收到警告信息的天数。
+         -E 帐号到期的日期。过了这天，此帐号将不可用。
+         -d 上一次更改的日期
+         -i 停滞时期。如果一个密码已过期这些天，那么此帐号将不可用。
+         -l 例出当前的设置。由非特权用户来确定他们的密码或帐号何时过期
+		 
+		 
+
+
+5. audit
+linux的审计功能（audit）  
+
+2009-07-10 10:33:21|  分类： linux技术 |字号 订阅
+2.6 Linux内核有用日志记录事件的能力，比如记录系统调用和文件访问。然后，管理员可以评审这些日志，确定可能存在的安全裂口，比如失败的登录尝试，或者 用户对系统文件不成功的访问。这种功能称为Linux审计系统，在Red Hat Enterprise Linux 5中已经可用。
+　　要使用Linux Auditing System，可采用下面的步骤：
+　　(1) 配置审计守护进程。
+　　(2) 添加审计规则和观察器来收集所需的数据。
+　　(3) 启动守护进程，它启用了内核中的Linux Auditing System并开始进行日志记录。
+　　(4) 通过生成审计报表和搜索日志来周期性地分析数据。
+　　本章将详细讨论各个部分。
+25.1  配置审计守护进程
+　　Red Hat Enterprise Linux 5内核中的Linux Auditing System默认是关闭的。当启动审计守护进程时，启用这个内核特性。要在启动时不通过守护进程auditd来启用Linux Auditing System，只需用audit= 1参数来引导。如果这个参数设置为1，而且auditd没有运行，则审计日志会被写到/var/log/messages中。
+　　要使用auditd和实用程序来生成日志文件报表，必须安装audit RPM程序包。如果没有安装，则参见第3章“操作系统更新”了解关于程序包安装的指令。
+　　用了auditd，管理员就可以定制产生的审计日志。下面只是一部分可用的自定义配置：
+● 设置审计消息的专用日志文件
+● 确定是否循环使用日志文件
+● 如果日志文件的启动用掉了太多磁盘空间则发出警告
+● 配置审计规则记录更详细的信息
+● 激活文件和目录观察器
+　　这些设置值及更多设置值位于/etc/audit/auditd.conf文件中，它包含修改审计守护进程的行为的选项。每个选项均应在独立的一行上，后面跟着等于号(=)和这个选项的值。程序清单25-1显示了默认配置文件。
+　　程序清单25-1  默认审计守护进程参数
+     #
+     # This file controls the configuration of the audit daemon
+     #
+     
+     log_file = /var/log/audit/audit.log
+     log_format = RAW
+     priority_boost = 3
+     flush = INCREMENTAL
+     freq = 20
+     num_logs = 4
+     dispatcher = /sbin/audispd
+     disp_qos = lossy
+     max_log_file = 5
+     max_log_file_action = ROTATE
+     space_left = 75
+     space_left_action = SYSLOG
+     action_mail_acct = root
+     admin_space_left = 50
+     admin_space_left_action = SUSPEND
+     disk_full_action = SUSPEND
+     disk_error_action = SUSPEND
+　　可以配置下面这些选项(参见程序清单25-1了解默认值)：
+     log_file
+审计日志文件的完整路径。如果您配置守护进程向除默认/var/log/audit/外的目录中写日志文件时，一定要修改它上面的文件权限，使得只有根用户有读、写和执行权限。所有其他用户都不能访问这个目录或这个目录中的日志文件。
+     log_format
+写日志时要使用的格式。当设置为RAW时，数据会以从内核中检索到的格式写到日志文件中。当设置为NOLOG时，数据不会写到日志文件中，但是如果用dispatcher选项指定了一个，则数据仍然会发送到审计事件调度程序中。
+     priority_boost
+　　　　审计应采用多少优先级推进守护进程。必须是非负数。0表示没有变化。
+     flush
+多长时间向日志文件中写一次数据。值可以是NONE、INCREMENTAL、DATA和SYNC之一。如果设置为NONE，则不需要做特殊努力来将数据 刷新到日志文件中。如果设置为INCREMENTAL，则用freq选项的值确定多长时间发生一次向磁盘的刷新。如果设置为DATA，则审计数据和日志文 件一直是同步的。如果设置为SYNC，则每次写到日志文件时，数据和元数据是同步的。
+     freq
+如果flush设置为INCREMETNAL，审计守护进程在写到日志文件中前从内核中接收的记录数。
+     num_logs
+max_log_file_action设置为ROTATE时要保存的日志文件数目。必须是0~99之间的数。如果设置为小于2，则不会循环日志。如果递 增了日志文件的数目，就可能有必要递增/etc/audit/audit.rules中的内核backlog设置值，以便留出日志循环的时间。如果没有设 置num_logs值，它就默认为0，意味着从来不循环日志文件。
+     dispatcher
+当启动这个守护进程时，由审计守护进程自动启动程序。所有守护进程都传递给这个程序。可以用它来进一步定制报表或者以与您的自定义分析程序兼容的不同格式 产生它们。自定义程序的示例代码可以在/usr/share/doc/audit- <version>/skeleton.c中找到。由于调度程序用根用户特权运行，因此使用这个选项时要极其小心。这个选项不是必需的。
+     disp_qos
+控制调度程序与审计守护进程之间的通信类型。有效值为lossy和lossless。如果设置为lossy，若审计守护进程与调度程序之间的缓冲区已满 (缓冲区为128千字节)，则发送给调度程序的引入事件会被丢弃。然而，只要log_format没有设置为nolog，事件就仍然会写到磁盘中。如果设 置为lossless，则在向调度程序发送事件之前和将日志写到磁盘之前，调度程序会等待缓冲区有足够的空间。
+     max_log_file
+以兆字节表示的最大日志文件容量。当达到这个容量时，会执行max_log_file _action指定的动作。
+     max_log_file_action
+当达到max_log_file的日志文件大小时采取的动作。值必须是IGNORE、SYSLOG、SUSPEND、ROTATE和KEEP_LOGS之 一。如果设置为IGNORE，则在日志文件达到max_log_file后不采取动作。如果设置为SYSLOG，则当达到文件容量时会向系统日志/var /log/messages中写入一条警告。如果设置为SUSPEND，则当达到文件容量后不会向日志文件写入审计消息。如果设置为ROTATE，则当达 到指定文件容量后会循环日志文件，但是只会保存一定数目的老文件，这个数目由num_logs参数指定。老文件的文件名将为audit.log.N，其中 N是一个数字。这个数字越大，则文件越老。如果设置为KEEP_LOGS，则会循环日志文件，但是会忽略num_logs参数，因此不会删除日志文件。
+     space_left
+以兆字节表示的磁盘空间数量。当达到这个水平时，会采取space_left_action参数中的动作。
+     space_left_action
+当磁盘空间量达到space_left中的值时，采取这个动作。有效值为IGNORE、SYSLOG、EMAIL、SUSPEND、SINGLE和 HALT。如果设置为IGNORE，则不采取动作。如果设置为SYSLOG，则向系统日志/var/log/messages写一条警告消息。如果设置为 EMAIL，则从action_mail_acct向这个地址发送一封电子邮件，并向/var/log/messages中写一条警告消息。如果设置为 SUSPEND，则不再向审计日志文件中写警告消息。如果设置为SINGLE，则系统将在单用户模式下。如果设置为SALT，则系统会关闭。
+     action_mail_acct
+负责维护审计守护进程和日志的管理员的电子邮件地址。如果地址没有主机名，则假定主机名为本地地址，比如root。必须安装sendmail并配置为向指定电子邮件地址发送电子邮件。
+     admin_space_left
+以兆字节表示的磁盘空间数量。用这个选项设置比space_left_action更多的主动性动作，以防万一space_left_action没有让 管理员释放任何磁盘空间。这个值应小于space_left_action。如果达到这个水平，则会采取admin_space_left_ action所指定的动作。
+     admin_space_left_action
+当自由磁盘空间量达到admin_space_left指定的值时，则采取动作。有效值为IGNORE、SYSLOG、EMAIL、SUSPEND、SINGLE和HALT。与这些值关联的动作与space_left_action中的相同。
+     disk_full_action
+如果含有这个审计文件的分区已满，则采取这个动作。可能值为IGNORE、SYSLOG、SUSPEND、SINGLE和HALT。与这些值关联的动作与space_left _action中的相同。
+　　提示：
+　　如果不循环审计日志文件，则含有/var/log/audit/的分区可能变满并引起系统错误。因此，建议让/var/log/audit/位于一个单独的专用分区。
+     disk_error_action
+如果在写审计日志或循环日志文件时检测到错误时采取的动作。值必须是IGNORE、SYSLOG、SUSPEND、SINGLE和HALT之一。与这些值关的动作与space_left_action中的相同。
+　　/etc/sysconfig/auditd文件可以用来设置带EXTRAOPTIONS参数的auditd的命令行选项。唯一的命令行选项-f以调 试模式安排守护进程。如果启用了调试模式，则会出现标准错误消息而不是日志文件。AUDITD_LANG设置值可以用来修改守护进程的位置。如果设置为 none，则所有位置信息会从审计环境中删除。如果AUDITD_CLEAN _STOP选项设置为yes，则当用service auditd stop命令停止守护进程时，会删除审计规则与观察器。要了解关于审计规则的更多信息，请参见下一节。
+25.2  编写审计规则与观察器
+　　Linux Auditing System可以用来为事件写规则，比如系统调用，比如用auditctl命令行实用程序观察文件或目录上的操作。如果用初始化脚本启动auditd(用 service auditd start命令)，则规则和观察器可以添加到/etc/audit/audit.rules中，以便在启动守护进程时执行它们。只有根用户可以读或修改这 个文件。
+　　/etc/audit.audit.rules中的每个规则和观察器必须单独在一行中，以#开头的行会被忽略。规则和观察器是auditctl命令行 选项，前面没有auditctl命令。它们从上到下阅读文件。如果一个或多个规则或观察器互相冲突，则使用找到的第一个。
+25.2.1  编写审计规则
+　　要添加审计规则，可在/etc/audit/audit.rules文件中用下面的语法：
+     -a <list>,<action> <options>
+　　警告：
+　　如果在运行守护进程时添加规则/etc/audit/audit.rules，则一定要以根用户身份用service auditd restart命令启用修改。也可以使用service auditd reload命令，但是这种方法不会提供配置文件错误的消息。
+　　列表名必须是下列名称之一。
+     task
+每个任务的列表。只有当创建任务时才使用。只有在创建时就已知的字段(比如UID)才可以用在这个列表中。
+     entry
+　　　　系统调用条目列表。当进入系统调用确定是否应创建审计时使用。
+     exit
+　　　　系统调用退出列表。当退出系统调用以确定是否应创建审计时使用。
+     user
+用户消息过滤器列表。内核在将用户空间事件传递给审计守护进程之前使用这个列表过滤用户空间事件。有效的字段只有uid、auid、gid和pid。
+     exclude
+事件类型排除过滤器列表。用于过滤管理员不想看到的事件。用msgtype字段指定您不想记录到日志中的消息。
+　　这个动作必须下面的动作之一：
+     never
+　　　　不生成审计记录。
+     always
+分配审计上下文，总是把它填充在系统调用条目中，总是在系统调用退出时写一个审计记录。
+　　<options>可以包括下面几个选项中的一个或多个。
+     -s <syscall>
+根据名称或数字指定一个系统。要指定所有系统调用，可使用all作为系统调用名称。如果程序使用了这个系统调用，则开始一个审计记录。可以为相同的规则指 定多个系统调用，每个系统调用必须用-S启动。在相同的规则中指定多个系统，而不是列出单独的规则，这样可以导致更好的性能，因为只需要评价一个规则。
+     - F <name[=,!=,<,>,<=]value>
+指定一个规则字段。如果为一个规则指定了多个字段，则只有所有字段都为真才能启动一个审计记录。每个规则都必须用-F启动，最多可以指定64个规则。如果用用户名和组名作为字段，而不是用UID和GID，则会将它们解析为UID和GID以进行匹配。下面是有效的字段名：
+         pid
+　　　　　　进程ID。
+         ppid
+　　　　　　父进程的进程ID。
+         uid
+　　　　　　用户ID。
+         euid
+　　　　　　有效用户ID。
+         suid
+　　　　　　设置用户ID。
+         fsuid
+　　　　　　文件系统用户ID。
+         gid
+　　　　　　组ID。
+         egid
+　　　　　　有效组ID。
+         sgid
+　　　　　　设置组ID。
+         fsgid
+　　　　　　文件系统组ID。
+         auid
+　　　　　　审计ID，或者用户登录时使用的原始ID。
+         msgtype
+　　　　　　消息类型号。只应用在排除过滤器列表上。
+         pers
+　　　　　　OS Personality Number。
+         arch
+系统调用的处理器体系结构。指定精确的体系结构，比如i686(可以通过uname -m命令检索)或者指定b32来使用32位系统调用表，或指定b64来使用64位系统调用表。
+         devmajor
+　　　　　　Device Major Number。
+         devminor
+　　　　　　Device Minor Number。
+         
+         inode
+　　　　　　Inode Number。
+         exit
+　　　　　　从系统调用中退出值。
+         success
+　　　　　　系统调用的成功值。1表是真/是，0表示假/否。
+         a0，a1，a2，a3
+　　　　　　分别表示系统调用的前4个参数。只能用数字值。
+         key
+设置用来标记事件的审计日志事件消息的过滤键。参见程序清单25-2和程序清单25-3中的示例。当添加观察器时，类似于使用-k选项。参见“编写审计规则与观察器”了解关于-k选项的详细信息。
+         obj_user
+　　　　　　资源的SELinux用户。
+         obj_role
+　　　　　　资源的SELinux角色。
+         obj_type
+　　　　　　资源的SELinux类型。
+         obj_lev_low
+　　　　　　资源的SELinux低级别。
+         obj_lev_high
+　　　　　　资源的SELinux高级别。
+         subj_role
+　　　　　　程序的SELinux角色。
+         subj_type
+　　　　　　程序的SELinux类型。
+         subj_sen
+　　　　　　程序的SELinux敏感性。
+         subj_clr
+　　　　　　程序的SELinux安全级别(clearance)。
+　　-a选项向列表末尾添加规则。要向列表开头添加规则，可用-A替换-a。删除语法相同的规则，用-d替换-a。要删除所有规则，可指定-D选项。程序清单25-2含有一些示例审计规则，比如/etc/audit/audit.rules。
+　　程序清单25-2  示例审计规则
+     #Record all file opens from user 501
+     #Use with caution since this can quickly
+     #produce a large quantity of records
+     -a exit,always -S open -F uid=501 -F key=501open
+     #Record file permission changes
+     -a entry,always -S chmod
+　　提示：
+　　如果安装了audit程序包，则其他示例在/usr/share/doc/audit-<version>/目录的*.rules文件中。
+　　当发生了定义的规则中的动作时，如果有一个规则在/etc/audit/auditd.conf中定义则它会通过调度程序发送，然后会有一条日志消息 写到/var/log/audit/audit.log中。例如，程序清单25-3中含有程序清单25-2中的第一个规则的日志项，日志文件从用户501 打开。这个规则包括一个过滤键，它出现在程序清单25-3中日志项的末尾。
+　　程序清单25-3  示例审计规则日志消息
+     type=SYSCALL msg=audit(1168206647.422:5227): arch=c000003e syscall=2 
+     success=no exit=-2 a0=7fff37fc5a40 a1=0 a2=2aaaaaaab000 a3=0 items=1 
+     ppid=26640 pid=2716 auid=501 uid=501 gid=501 euid=501 suid=501 fsuid=501 
+     egid=501 sgid=501 fsgid=501 tty=pts5 comm="vim" exe="/usr/bin/vim" 
+     key="501open"
+25.2.2  编写审计观察器
+　　Linux Auditing System也允许管理员观察文件和目录。如果一个观察器放在一个文件或目录上，则会记录成功或失败的动作，比如打开和执行文件或目录。要添加观察器，可使用-w选项，后面跟着一个要观察的文件或目录。
+　　警告：
+　　如果在守护进程运行时您添加了观察器/etc/audit/audit.rules，则一定要以根用户身份用service auditd restart命令启用修改。也可以用service auditd reload命令，但是它不会通知您关于配置文件错误的消息。
+　　程序清单25-4中含有包括在/etc/audit/audit.rules文件中的示例规则。如果与-w结合起来使用-k <key>选项，则由观察器产生的所有记录会含有一个警报词(限制为31个字节)，因此可以将该观察器的记录轻松地从日志文件中过滤出来。要 限制文件或目录观察器为某些动作，可使用-p选项，后面跟着下面的选项中的一个或多个：r表示观察读动作，w表示观察写动作，x表示观察执行动作，a表示 在末尾添加动作。要删除一个观察器，可使用由后面跟着文件或目录的-W选项。
+　　程序清单25-4  示例审计观察器
+     #Watch for changes to sysconfig files
+     -w /etc/sysconfig -k SYSCONFIG
+     #Watch for changes to audit config files
+     -w /etc/audit/audit.rules -k AUDIT_RULES
+     -w /etc/audit/auditd.conf -k AUDIT_CONF
+     -w /var/log/audit/ -k LOG_AUDIT
+     #Watch to see who tries to start the VPN client
+     -w /usr/bin/vpnc -k VPNC -p x
+     #Watch password files
+     -w /etc/group -k PASSWD
+     -w /etc/passwd -k PASSWD
+     -w /etc/shadow -k PASSWD
+　　例如，程序清单25-4包括了关键过滤器PASSWD的口令文件上的一个观察器。程序清单25-5含有删除一个用户后/var/log/audit /audit.log中的日志项，它会修改正在观察的这些口令文件。正如程序清单25-3中带过滤键的规则的示例，这个键被添加到日志项的末尾，因此可以 轻松地将它从日志项的其余部分过滤出来。
+　　程序清单25-5  审计观察器的示例日志项
+     type=SYSCALL msg=audit(1168227741.656:17915): arch=c000003e syscall=82
+     success=yes exit=0 a0=7fff00975dd0 a1=60a700 a2=0 a3=22 items=5 ppid=26575
+     pid=4147 auid=501 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0
+     tty=pts4 comm="userdel" exe="/usr/sbin/userdel" key="PASSWD"
+25.2.3  定制auditctl
+　　配置审计系统参数的命令行选项也能包括在/etc/audit/audit.rules中。表25-1列出了这些选项。
+表25-1  配置审计系统参数的auditctl选项
+选    项
+说    明
+-b <backlog>
+允许的未完成审计缓冲区的最大数目。内核中的默认值为64。如果缓冲区已满，则内核引用通过-f选项设置的失败标志，以确定采取哪个动作
+-e [0,1]
+设置为0禁用审计，或者设置为1启用审计。对于为了故障检修或其他目的而临时禁用审计会很有用
+-f [0,1,2]
+设置用于通知内核如何处理关键错误(比如审计缓冲区已满或者内核内存用完)的失败标志。有效值是0(没有动作)，1(用printk将消息记录到/var/log/messages)和2(混乱)。默认值为1，但是2更安全。
+-r <rate>
+以每秒钟的消息条数为单位的速率限制。如果设置为0，则没有限制。如果超出了速率限制，则内核会咨询-f选项中的失败标志来确定采取哪个动作
+-i
+当从一个文件中读取规则时忽略错误
+　　
+　　要验证设置了这些选项，可用auditctl -s命令查看状态。输出类似下面这样：
+     AUDIT_STATUS: enabled=1 flag=1 pid=1954 rate_limit=0 backlog_limit=256
+     lost=0 backlog=0
+25.3  启动和停止守护进程
+　　当配置守护进程和添加规则与观察器时，可以以根用户身份执行service auditd start命令启动守护进程。要停止它，可使用service auditd stop命令。要使它自动在运行时启动，则应作为根用户执行chkconfig auditd on命令。
+　　如果当您修改守护进程的配置时守护进程已经在运行，则应以根用户身份执行service auditd restart命令启用修改。要验证规则与观察器已经修改，应以根用户身份执行auditctl -1命令列出所有活动的规则和观察器。例如，程序清单25-6显示了程序清单25-2和25-4中的规则和观察器的auditctl -1输出。
+　　25.4  分析记录
+　　如果使用了auditd，则除非用/etc/audit/audtid.conf中的log_file参数修改了文件名，否则审计消息会写到/var /log/audit.log中。日志文件是文本文件，可以通过less实用程序或文本编辑器(比如Emacs或Vi)阅读。消息的格式为从内核中接收的 格式，顺序也是接收时的顺序。aureport实用程序可以用来从日志文件中生成汇总报表。ausearch实用程序可以用来基于一些条件搜索报表。这些 条件可以是：审计事件ID、文件名、UID或GID、消息类型和系统调用名等。
+　　除非将守护进程配置为循环日志文件和像前面“配置审计守护进程”一节中介绍的那样删除老文件，否则/var/log/audit/中的日志文件永远不 会被删除。管理员应经常检查日志，删除老日志或者移到备份存储器中。如果不周期性地删除日志，它们会填满整个磁盘的。因为这个原因，所以建议把/var /log/audit/放在一个单独的专用分区上，这样就不会影响写其他日志文件或者引起其他系统错误。
+　　提示：
+　　要强制立即循环日志文件，可以以根用户身份执行service auditd rotate命令。老日志文件的文件名将为audit.log.N，其中N是一个数字。这个数字越大，日志文件越老。
+25.4.1  生成报表
+　　要生成审计消息的报表，可使用aureport。为了安全起见，/var/log/audit/目录和其中的所有审计日志文件只对根用户可读。因此， 您必须作为根用户执行aureport命令。如果执行aureport时没有使用任何选项，则会显示程序清单25-7中所示的汇总报表。
+　　表25-2  生成特定报表的aureport选项
+选    项
+说    明
+-a
+报告关于访问向量缓冲(access vector cache，AVC)的消息
+-c
+报告关于配置修改的消息
+-cr
+报告关于crypto事件的消息
+-e
+报告关于事件的消息
+-f
+报告关于文件的消息
+-h
+报告关于主机的消息
+-l
+报告关于登录的消息
+-m
+报告关于账户修改的消息
+-ma
+报告关于Mandatory Access Control(MAC)事件的消息
+-p
+报告关于进程的消息
+-s
+报告关于系统调用的消息
+-tm
+报告关于终端的消息
+　　要以更可读的格式产生结果，比如用它们映射到的用户名替换UID，则也要使用-i选项：
+     aureport -<flag> -i
+　　要显示每个日志的启动和停止时间，可以添加-t选项：
+     aureport -<flag> -i -t
+　　要显示等于或早于特定时间的事件，可以添加-te选项，并在后面跟着结束日期和结束时间。用数字格式表示您所在地点的日期和时间，并以24小时制格式表示时间。例如，对于en_us.UTF-8这个地方，可使用日期格式MM/DD/YY：
+     aureport -<flag> -i -te <end date> <end time>
+　　要显示等于或者晚于特定时间的事件，添加-ts选项，后面跟着开始日期和时间。采用与-te选项相同的日期和时间格式化规则。
+     aureport -<flag> -i -ts <start date> <start time>
+　　要仅显示失败事件，则使用- -failure，注意这个选项前面有两条虚线而不是一条：
+     aureport -<flag> -i --failed
+　　要仅显示成功事件，则使用- -success，注意这个选项前面有两条虚线而不是一条：
+     aureport -<flag> -i --success
+　　有些报表也可以用- -summary选项以汇总格式生成；注意这个选项前面有两条虚线作前缀：
+     aureport -<flag> -i --summary
+　　要产生汇总报表而不是关于一个地区的报表，可使用-r选项：
+     aureport -r -i
+　　要产生来自一个日志文件的报表而不是默认报表，则可用-if选项指定它：
+     aureport -<flag> -i -if /var/log/audit/audit.log.1
+25.4.1  搜索记录
+　　除了生成事件报表并用aureport汇总外，管理员也可以用ausearch搜索审计记录。以根用户身份执行ausearch命令，后面跟着表 25-3中的一个或多个选项。如果指定了多个选项，则显示的结果会对两个请求都匹配。要检索匹配一个选项或另一个选项的条件，则执行两次不同的搜索并亲自 组合结果。
+25.5  用审计跟踪进程
+　　autrace实用程序可以用来生成特定进程中的审计记录。当autrace在运行时，没有其他规则或观察器可以启用。对于其他审计实用程序，autrace必须以根用户身份运行。要审计跟踪一个进程，需采用下列步骤：
+　　(1) 暂时关闭所有规则与观察器：
+     auditctl -D
+　　(2) (可选)要把审计记录从进程中隔离开，需强制一个日志文件循环：
+     service auditd rotate
+　　autrace的日志将放在/var/log/audit/audit.log中。
+　　(3) 在命令行执行autrace：
+     autrace <command to trace>
+　　(4) 等待直到进程完成。将显示一条类似于下面这个消息：
+     Trace complete. You can locate the records with 'ausearch -i -p 10773'
+　　(5) 重启审计守护进程来重新启用规则和观察器：
+     service auditd restart
+　　(6) 用ausearch显示关于跟踪的详细信息。
+
+
+
+5. rsync
+
+[root@Hammer home]# rpm -qa |grep rsync                 #检查系统是否安装了rsync软件包
+rsync-2.6.8-3.1
+[root@Hammer CentOS]# rpm -ivh rsync-2.6.8-3.1.i386.rpm # 如果没有安装则手动安装
+
+[root@test rsync-3.0.4]# vim /etc/xinetd.d/rsync 
+
+
+1 配置rsync servervi /etc/xinetd.d/rsync
+将disable=yes改为no
+
+service rsync
+{
+        disable = no
+        socket_type     = stream
+        wait            = no
+        user            = root
+        server          = /usr/bin/rsync
+        server_args     = --daemon
+        log_on_failure  += USERID
+}
+
+2 配置rsync自动启动
+[root@test etc]# chkconfig rsync on
+[root@test etc]# chkconfig rsync --list
+rsync           on
+
+3 配置rsyncd.conf 
+[root@test etc]# vim rsyncd.conf 
+
+uid = root
+gid = root
+use chroot = no
+max connections = 4
+strict modes = yes
+port = 873
+pid file = /var/run/rsyncd.pid
+lock file = /var/run/rsync.lock
+log file = /var/log/rsyncd.log
+
+[backup]
+path = /srv
+comment = This is test
+auth users = scihoo
+uid = root
+gid = root
+secrets file = /home/rsync.ps
+read only = no
+list = no
+
+
+4 确保etc/services中rsync端口号正确
+[root@test etc]# vim /etc/services
+rsync           873/tcp                         # rsync
+rsync           873/udp                         # rsync
+
+5 配置rsync密码(在上边的配置文件中已经写好路径)/home/rsync.ps(名字随便写，只要和上边配置文件里的一致即可)，格式(一行一个用户)
+[root@test etc]# vi /home/rsync.ps 
+scihoo:scihoo
+
+6 配置rsync密码文件权限
+[root@test home]# chown root.root rsync.ps 
+[root@test home]# chmod 400 rsync.ps 
+
+7 启动配置
+[root@test home]# /etc/init.d/xinetd restart
+Stopping xinetd:                                           [  OK  ]
+Starting xinetd:                                           [  OK  ]
+
+8 如果xinetd没有的话，需要安装一下
+[root@test home]# yum -y install xinetd
+
+
+ 启动rsync server
+  RSYNC服务端启动的两种方法
+9、启动rsync服务端（独立启动）
+[root@test home]# /usr/bin/rsync --daemon
+
+10、启动rsync服务端 （有xinetd超级进程启动）
+[root@test home]# /etc/init.d/xinetd reload
+
+11  加入rc.local
+在各种操作系统中，rc文件存放位置不尽相同，可以修改使系统启动时把rsync --daemon加载进去。
+[root@test home]# vi /etc/rc.local
+/usr/local/rsync –daemon           #加入一行
+
+12 检查rsync是否启动
+[root@test home]# lsof -i :873
+COMMAND  PID USER   FD   TYPE DEVICE SIZE NODE NAME
+xinetd  4396 root    5u  IPv4 633387       TCP *:rsync (LISTEN)
+
+
+客户端配置
+1 配置三个过程就可以了
+  1.1 设定密码文件
+  1.2 测试rsync执行指令
+  1.3 将rsync指令放入工作排程（crontab）
+[root@aj1 home]# vi /etc/xinetd.d/rsync 
+
+# default: off
+# description: The rsync server is a good addition to an ftp server, as it \
+#       allows crc checksumming etc.
+service rsync
+{
+        disable = yes
+        socket_type     = stream
+        wait            = no
+        user            = root
+        server          = /usr/bin/rsync
+        server_args     = --daemon
+        log_on_failure  += USERID
+}
+
+1.1  配置密码文件  (注：为了安全，设定密码档案的属性为：600。rsync.ps的密码一定要和Rsync Server密码设定案里的密码一样)
+[root@aj1 home]# vi rsync.ps 
+sciooo
+
+[root@aj1 home]# chown root.root .rsync.ps   # 注意必须给权限
+[root@aj1 home]# chmod 600 .rsync.ps         # 必须修改权限
+
+1.2 从服务器上下载文件
+[root@aj1 rsync-3.0.4]# rsync -avz --password-file=/home/rsync.ps scihoo@192.168.0.206::backup /home/
+
+   从本地上传到服务器上去
+[root@aj1 rsync-3.0.4]# rsync -avz --password-file=/home/rsync.ps /home scihoo@192.168.0.206::backup
+
+
+
+-------------------------------------------------------------------------
+
+How do you install and use rsync to synchronize files and directories from one location (or one server) to another location? - A common question asked by new sys admin.
+
+rsync is a free software computer program for Unix and Linux like systems which synchronizes files and directories from one location to another while minimizing data transfer using delta encoding when appropriate. An important feature of rsync not found in most similar programs/protocols is that the mirroring takes place with only one transmission in each direction.
+
+So what is unique about the rsync command?
+
+It can perform differential uploads and downloads (synchronization) of files across the network, transferring only data that has changed. The rsync remote-update protocol allows rsync to transfer just the differences between two sets of files across the network connection.
+
+How do I install rsync?
+
+Use any one of the following commands to install rsync. If you are using Debian or Ubuntu Linux, type the following command:
+# apt-get install rsync
+
+OR
+$ sudo apt-get install rsync
+
+If you are using Red Hat Enterprise Linux (RHEL) / CentOS 4.x or older version, type the following command:
+# up2date rsync
+
+RHEL / CentOS 5.x or newer (or Fedora Linux) user type the following command:
+# yum install rsync
+
+Always use rsync over ssh
+
+Since rsync does not provide any security while transferring data it is recommended that you use rsync over ssh session. This allows a secure remote connection. Now let us see some examples of rsync command.
+
+Comman rsync command options
+
+--delete : delete files that don't exist on sender (system)
+-v : Verbose (try -vv for more detailed information)
+-e "ssh options" : specify the ssh as remote shell
+-a : archive mode
+-r : recurse into directories
+-z : compress file data
+Task : Copy file from a local computer to a remote server
+
+Copy file from /www/backup.tar.gz to a remote server called openbsd.nixcraft.in
+$ rsync -v -e ssh /www/backup.tar.gz jerry@openbsd.nixcraft.in:~
+
+Output:
+
+Password:
+sent 19099 bytes  received 36 bytes  1093.43 bytes/sec
+total size is 19014  speedup is 0.99
+Please note that symbol ~ indicate the users home directory (/home/jerry).
+
+Task : Copy file from a remote server to a local computer
+
+Copy file /home/jerry/webroot.txt from a remote server openbsd.nixcraft.in to a local computer's /tmp directory:
+$ rsync -v -e ssh jerry@openbsd.nixcraft.in:~/webroot.txt /tmp
+
+Task: Synchronize a local directory with a remote directory
+
+$ rsync -r -a -v -e "ssh -l jerry" --delete /local/webroot openbsd.nixcraft.in:/webroot
+
+Task: Synchronize a remote directory with a local directory
+
+$ rsync -r -a -v -e "ssh -l jerry" --delete openbsd.nixcraft.in:/webroot/ /local/webroot
+
+Task: Synchronize a local directory with a remote rsync server or vise-versa
+
+$ rsync -r -a -v --delete rsync://rsync.nixcraft.in/cvs /home/cvs
+
+OR
+$ rsync -r -a -v --delete /home/cvs rsync://rsync.nixcraft.in/cvs
+
+Task: Mirror a directory between my "old" and "new" web server/ftp
+
+You can mirror a directory between my "old" (my.old.server.com) and "new" web server with the command (assuming that ssh keys are set for password less authentication)
+$ rsync -zavrR --delete --links --rsh="ssh -l vivek" my.old.server.com:/home/lighttpd /home/lighttpd
+
